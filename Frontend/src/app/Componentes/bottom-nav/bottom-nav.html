@@ -1,0 +1,31 @@
+<nav>
+  <div class="nav-inner flex items-center justify-around px-2 bg-[#0d0d12]/90 backdrop-blur-2xl border-t border-white/[0.08]">
+
+    <a routerLink="/" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="nav-active" class="nav-item" aria-label="Inicio">
+      <i class="bi bi-house text-2xl"></i>
+      <span class="text-[10px] font-medium tracking-wide">Home</span>
+    </a>
+
+    <a routerLink="/albums" routerLinkActive="nav-active" class="nav-item" aria-label="Álbumes">
+      <i class="bi bi-folder text-2xl"></i>
+      <span class="text-[10px] font-medium tracking-wide">Albums</span>
+    </a>
+
+    <a routerLink="/upload" class="-mt-5 flex flex-col items-center" aria-label="Subir foto">
+      <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#c9956a] to-[#7a4a6a] flex items-center justify-center shadow-lg shadow-[#c9956a]/30 transition-transform duration-200 active:scale-95">
+        <i class="bi bi-plus-lg text-2xl text-white"></i>
+      </div>
+    </a>
+
+    <a routerLink="/gallery" routerLinkActive="nav-active" class="nav-item" aria-label="Galería">
+      <i class="bi bi-images text-2xl"></i>
+      <span class="text-[10px] font-medium tracking-wide">Gallery</span>
+    </a>
+
+    <a routerLink="/timeline" routerLinkActive="nav-active" class="nav-item" aria-label="Historia">
+      <i class="bi bi-clock text-2xl"></i>
+      <span class="text-[10px] font-medium tracking-wide">History</span>
+    </a>
+
+  </div>
+</nav>
