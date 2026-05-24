@@ -1,0 +1,58 @@
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">
+      <span class="live-dot"></span> Desde el 10 de febrero de 2026
+    </div>
+    <h1 class="hero-title">MARCHE Y <span class="accent">DANI</span></h1>
+    <div class="bignum">
+      {{ days() }}
+      <span class="label">days</span>
+      <span class="hours">{{ timeString() }}</span>
+    </div>
+    <div class="pbar-wrap">
+      <div class="pbar-fill" [style.width]="yearProgress() + '%'"></div>
+    </div>
+    <div class="pbar-meta">
+      <span>10 feb 2026</span>
+      <span class="accent-text">{{ yearProgress() }}% para el primer año</span>
+      <span>10 feb 2027</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-label">Months</div>
+      <div class="stat-val pink">{{ months() }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Weeks</div>
+      <div class="stat-val">{{ weeks() }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Pics</div>
+      <div class="stat-val purple">0</div>
+    </div>
+  </div>
+
+  <!-- Últimas fotos -->
+  <div class="section-label">
+    Last pics <span class="count">0</span>
+  </div>
+
+  <div class="photos-scroll">
+    @for (photo of recentPhotos; track photo) {
+      <div class="photo-card">
+        <i class="bi bi-image"></i>
+      </div>
+    }
+    <a routerLink="/upload" class="upload-card">
+      <i class="bi bi-plus-circle"></i>
+      <span>Upload pic</span>
+    </a>
+  </div>
+
+  <div class="spacer"></div>
+</div>
