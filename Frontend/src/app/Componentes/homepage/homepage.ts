@@ -54,6 +54,30 @@ export class Homepage implements OnDestroy {
 
   readonly recentPhotos = [1, 2, 3, 4];
 
+  readonly carouselIndex = signal(0);
+  readonly totalSlides = computed(() => this.recentPhotos.length + 1);
+  readonly carouselDots = computed(() => Array(this.totalSlides()).fill(0));
+
+  private touchStartX = 0;
+
+  onTouchStart(e: TouchEvent): void {
+    this.touchStartX = e.touches[0].clientX;
+  }
+
+  onTouchEnd(e: TouchEvent): void {
+    const delta = this.touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(delta) < 40) return;
+    if (delta > 0) {
+      this.carouselIndex.update(i => Math.min(i + 1, this.totalSlides() - 1));
+    } else {
+      this.carouselIndex.update(i => Math.max(i - 1, 0));
+    }
+  }
+
+  goToSlide(index: number): void {
+    this.carouselIndex.set(index);
+  }
+
   ngOnDestroy() {
     clearInterval(this.timer);
   }
