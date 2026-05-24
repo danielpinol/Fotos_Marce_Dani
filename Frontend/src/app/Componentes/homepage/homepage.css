@@ -48,7 +48,7 @@
 }
 
 .days-number {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(88px, 26vw, 128px);
   font-weight: 300;
   line-height: 1;
@@ -64,7 +64,7 @@
 }
 
 .time-display {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 24px;
   font-weight: 300;
   letter-spacing: 0.18em;
@@ -149,7 +149,7 @@
 }
 
 .stat-val {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 42px;
   font-weight: 300;
   line-height: 1;
