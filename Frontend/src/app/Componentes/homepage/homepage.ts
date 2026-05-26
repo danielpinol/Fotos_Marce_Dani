@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 const ANNIVERSARY = new Date('2026-02-10T00:00:00');
@@ -6,7 +7,7 @@ const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 @Component({
   selector: 'app-homepage',
-  imports: [RouterLink],
+  imports: [RouterLink, NgOptimizedImage],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,10 +53,10 @@ export class Homepage implements OnDestroy {
     return Math.min(100, Math.round((elapsed / ONE_YEAR_MS) * 100));
   });
 
-  readonly recentPhotos = [1, 2, 3, 4];
+  readonly recentPhotos = [1, 2, 3];
 
   readonly carouselIndex = signal(0);
-  readonly totalSlides = computed(() => this.recentPhotos.length + 1);
+  readonly totalSlides = computed(() => 1 + this.recentPhotos.length + 1);
   readonly carouselDots = computed(() => Array(this.totalSlides()).fill(0));
 
   private touchStartX = 0;

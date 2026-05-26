@@ -72,8 +72,15 @@
     (touchend)="onTouchEnd($event)"
   >
     <div class="carousel-track" [style.transform]="'translateX(' + (-carouselIndex() * 100) + '%)'">
+      <!-- Foto real -->
+      <div class="carousel-slide" role="group" aria-label="Foto 1">
+        <div class="photo-card photo-card--image">
+          <img ngSrc="/photos/foto-marce-y-dani.jpeg" fill priority alt="Marce y Dani" style="object-fit: cover;">
+        </div>
+      </div>
+      <!-- Placeholders -->
       @for (photo of recentPhotos; track photo) {
-        <div class="carousel-slide" role="group" [attr.aria-label]="'Foto ' + ($index + 1) + ' de ' + totalSlides()">
+        <div class="carousel-slide" role="group" [attr.aria-label]="'Foto ' + ($index + 2) + ' de ' + totalSlides()">
           <div class="photo-card">
             <i class="bi bi-image" aria-hidden="true"></i>
           </div>
