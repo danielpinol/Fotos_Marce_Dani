@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, catchError, of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 
 export interface Album {
-  id: number;
+  id: string;
   title: string;
   description: string;
   photoCount: number;
@@ -12,15 +12,20 @@ export interface Album {
 }
 
 export interface Photo {
-  id: number;
-  albumId: number;
+  id: string;
+  albumId: string;
   url: string;
   createdAt: string;
 }
 
-const API = 'http://localhost:3000';
+// En Vercel las rutas son relativas al mismo dominio.
+// En localhost apunta al backend local.
+const API = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+  ? ''
+  : 'http://localhost:3000';
 
-function withBaseUrl(path: string): string {
+// Cloudinary URLs ya son absolutas; URLs locales (/uploads/...) necesitan el prefijo.
+function absUrl(path: string): string {
   return path.startsWith('http') ? path : `${API}${path}`;
 }
 
@@ -30,10 +35,7 @@ export class PhotoService {
 
   getAlbums() {
     return this.http.get<Album[]>(`${API}/api/albums`).pipe(
-      map(albums => albums.map(a => ({
-        ...a,
-        covers: a.covers.map(withBaseUrl),
-      }))),
+      map(albums => albums.map(a => ({ ...a, covers: a.covers.map(absUrl) }))),
       catchError(() => of([] as Album[])),
     );
   }
@@ -42,20 +44,20 @@ export class PhotoService {
     return this.http.post<Album>(`${API}/api/albums`, { title, description });
   }
 
-  deleteAlbum(id: number) {
+  deleteAlbum(id: string) {
     return this.http.delete(`${API}/api/albums/${id}`);
   }
 
-  uploadPhoto(albumId: number, file: File) {
+  uploadPhoto(albumId: string, file: File) {
     const form = new FormData();
     form.append('photo', file);
-    form.append('albumId', String(albumId));
+    form.append('albumId', albumId);
     return this.http.post<Photo>(`${API}/api/photos`, form);
   }
 
   getRecentPhotos() {
     return this.http.get<Photo[]>(`${API}/api/photos/recent`).pipe(
-      map(photos => photos.map(p => ({ ...p, url: withBaseUrl(p.url) }))),
+      map(photos => photos.map(p => ({ ...p, url: absUrl(p.url) }))),
       catchError(() => of([] as Photo[])),
     );
   }

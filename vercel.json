@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "framework": null,
-  "installCommand": "cd Frontend && npm install",
+  "installCommand": "npm install && cd Frontend && npm install",
   "buildCommand": "cd Frontend && npm run build",
   "outputDirectory": "Frontend/dist/my-angular-app/browser",
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

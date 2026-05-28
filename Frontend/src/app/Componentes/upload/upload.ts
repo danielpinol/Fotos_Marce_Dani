@@ -14,7 +14,7 @@ export class Upload {
   private readonly router = inject(Router);
 
   readonly albums = signal<Album[]>([]);
-  readonly selectedAlbumId = signal<number | null>(null);
+  readonly selectedAlbumId = signal<string | null>(null);
   readonly selectedFile = signal<File | null>(null);
   readonly previewUrl = signal<string | null>(null);
   readonly uploading = signal(false);
@@ -38,7 +38,7 @@ export class Upload {
     this.previewUrl.set(URL.createObjectURL(file));
   }
 
-  selectAlbum(id: number): void {
+  selectAlbum(id: string): void {
     this.selectedAlbumId.set(id);
   }
 

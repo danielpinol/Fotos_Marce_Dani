@@ -42,7 +42,7 @@ app.post('/api/albums', (req, res) => {
   if (!title) return res.status(400).json({ error: 'title required' });
   const db = readDB();
   const album = {
-    id: Date.now(),
+    id: String(Date.now()),
     title,
     description: description || '',
     photoCount: 0,
@@ -66,9 +66,9 @@ app.delete('/api/albums/:id', (req, res) => {
 app.post('/api/photos', upload.single('photo'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'no file' });
   const db = readDB();
-  const albumId = Number(req.body.albumId);
+  const albumId = req.body.albumId;
   const photo = {
-    id: Date.now(),
+    id: String(Date.now()),
     albumId,
     url: `/uploads/${req.file.filename}`,
     createdAt: new Date().toISOString(),
