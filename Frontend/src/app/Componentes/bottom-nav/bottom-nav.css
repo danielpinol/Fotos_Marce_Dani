@@ -1,6 +1,8 @@
 :host {
   display: block;
-  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
 }
 
 .nav-inner {

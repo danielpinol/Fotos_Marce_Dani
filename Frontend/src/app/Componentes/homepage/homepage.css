@@ -1,16 +1,13 @@
 :host {
   display: block;
-  height: 100%;
-  overflow: hidden;
 }
 
 /* ---- Page ---- */
 .page {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
   padding-top: env(safe-area-inset-top);
+  padding-bottom: 16px;
 }
 
 /* ---- Top line ---- */
@@ -187,8 +184,7 @@
 
 /* ---- Carousel ---- */
 .carousel {
-  flex: 1;
-  min-height: 0;
+  height: clamp(220px, 54vw, 340px);
   overflow: hidden;
   touch-action: pan-y;
 }

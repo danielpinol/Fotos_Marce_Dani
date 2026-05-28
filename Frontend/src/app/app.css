@@ -1,16 +1,15 @@
 :host {
   display: flex;
-  height: 100dvh;
+  min-height: 100dvh;
   justify-content: center;
-  overflow: hidden;
+  background-color: #0e0a0d;
 }
 
 .app-shell {
   position: relative;
   width: 100%;
   max-width: 480px;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100dvh;
   background-color: #0e0a0d;
   background-image:
     radial-gradient(ellipse 90% 55% at 50% 0%,  rgba(180, 90, 115, 0.22) 0%, transparent 65%),
@@ -20,6 +19,7 @@
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 @media (max-width: 520px) {
