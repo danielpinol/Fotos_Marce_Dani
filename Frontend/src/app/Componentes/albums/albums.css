@@ -20,7 +20,7 @@
 /* ---- Mosaic ---- */
 .chapter-mosaic {
   position: relative;
-  height: 185px;
+  height: clamp(145px, 44vw, 200px);
   overflow: hidden;
 }
 
