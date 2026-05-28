@@ -1,1 +1,82 @@
-<p>upload works!</p>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <h1 class="title">Subir foto</h1>
+    <div class="divider"></div>
+  </div>
+
+  @if (done()) {
+    <div class="success">
+      <i class="bi bi-check-circle success-icon" aria-hidden="true"></i>
+      <p>¡Foto subida!</p>
+    </div>
+  } @else if (albums().length === 0) {
+    <div class="empty">
+      <i class="bi bi-book empty-icon" aria-hidden="true"></i>
+      <p class="empty-text">Primero crea un capítulo en Albums</p>
+      <a href="/albums" class="go-albums">Ir a Capítulos</a>
+    </div>
+  } @else {
+
+    <!-- Foto -->
+    <div class="section">
+      <p class="section-label">Foto</p>
+      <label class="photo-pick" for="photo-input" [class.has-preview]="previewUrl() !== null">
+        @if (previewUrl()) {
+          <img [src]="previewUrl()" alt="Vista previa" class="preview-img">
+          <div class="preview-overlay" aria-hidden="true">
+            <i class="bi bi-arrow-repeat"></i>
+            <span>Cambiar</span>
+          </div>
+        } @else {
+          <i class="bi bi-camera pick-icon" aria-hidden="true"></i>
+          <span class="pick-label">Tomar foto o elegir de galería</span>
+        }
+      </label>
+      <input
+        id="photo-input"
+        type="file"
+        accept="image/*"
+        class="file-input"
+        aria-label="Seleccionar foto"
+        (change)="onFileChange($event)"
+      >
+    </div>
+
+    <!-- Capítulo -->
+    <div class="section">
+      <p class="section-label">¿En qué capítulo?</p>
+      <div class="album-list">
+        @for (album of albums(); track album.id) {
+          <button
+            class="album-btn"
+            type="button"
+            [class.album-btn--selected]="selectedAlbumId() === album.id"
+            (click)="selectAlbum(album.id)"
+            [attr.aria-pressed]="selectedAlbumId() === album.id"
+          >
+            <span class="album-name">{{ album.title }}</span>
+            <span class="album-count">{{ album.photoCount }} fotos</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button
+      class="submit-btn"
+      type="button"
+      [disabled]="!canUpload()"
+      (click)="doUpload()"
+    >
+      @if (uploading()) {
+        <i class="bi bi-hourglass-split" aria-hidden="true"></i> Subiendo…
+      } @else {
+        <i class="bi bi-cloud-upload" aria-hidden="true"></i> Subir foto
+      }
+    </button>
+
+  }
+
+</div>

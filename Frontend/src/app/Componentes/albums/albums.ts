@@ -1,16 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-interface Album {
-  id: number;
-  title: string;
-  description: string;
-  photoCount: number;
-  createdAt: Date;
-  covers: string[];
-}
+import { PhotoService, Album } from '../../services/photo.service';
 
 const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
 
@@ -22,11 +14,17 @@ const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Albums {
+  private readonly photoService = inject(PhotoService);
+
   readonly albums = signal<Album[]>([]);
   readonly showForm = signal(false);
   readonly newTitle = signal('');
   readonly newDescription = signal('');
   readonly albumToDelete = signal<Album | null>(null);
+
+  constructor() {
+    this.photoService.getAlbums().subscribe(albums => this.albums.set(albums));
+  }
 
   roman(n: number): string {
     return ROMAN[n - 1] ?? String(n);
@@ -58,22 +56,18 @@ export class Albums {
   deleteAlbum(): void {
     const target = this.albumToDelete();
     if (!target) return;
-    this.albums.update(list => list.filter(a => a.id !== target.id));
-    this.albumToDelete.set(null);
+    this.photoService.deleteAlbum(target.id).subscribe(() => {
+      this.albums.update(list => list.filter(a => a.id !== target.id));
+      this.albumToDelete.set(null);
+    });
   }
 
   createAlbum(): void {
     const title = this.newTitle().trim();
     if (!title) return;
-    const newAlbum: Album = {
-      id: Date.now(),
-      title,
-      description: this.newDescription().trim(),
-      photoCount: 0,
-      createdAt: new Date(),
-      covers: [],
-    };
-    this.albums.update(list => [...list, newAlbum]);
-    this.showForm.set(false);
+    this.photoService.createAlbum(title, this.newDescription().trim()).subscribe(album => {
+      this.albums.update(list => [...list, album]);
+      this.showForm.set(false);
+    });
   }
 }

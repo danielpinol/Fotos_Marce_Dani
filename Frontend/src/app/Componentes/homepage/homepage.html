@@ -1,13 +1,9 @@
 <div class="page">
 
-  <!-- Decorativo superior -->
   <div class="top-line" aria-hidden="true"></div>
 
-  <!-- Hero -->
   <section class="hero" aria-label="Contador de tiempo juntos">
-    <h1 class="couple-name">
-      Marche <span class="amp">&amp;</span> Dani
-    </h1>
+    <h1 class="couple-name">Marche <span class="amp">&amp;</span> Dani</h1>
     <p class="since-label">Juntos desde el 10 de febrero, 2026</p>
 
     <div class="counter-block">
@@ -38,10 +34,8 @@
     </div>
   </section>
 
-  <!-- Divisor -->
   <div class="soft-divider" aria-hidden="true"></div>
 
-  <!-- Stats -->
   <div class="stats-row" role="list" aria-label="Estadísticas">
     <div class="stat" role="listitem">
       <span class="stat-val">{{ months() }}</span>
@@ -54,16 +48,14 @@
     </div>
     <div class="stat-sep" aria-hidden="true"></div>
     <div class="stat" role="listitem">
-      <span class="stat-val rose">0</span>
+      <span class="stat-val rose">{{ recentPhotos().length }}</span>
       <span class="stat-label">Recuerdos</span>
     </div>
   </div>
 
-  <!-- Separador + encabezado de sección -->
   <div class="section-line" aria-hidden="true"></div>
   <p class="section-title">Últimos recuerdos</p>
 
-  <!-- Carrusel de fotos -->
   <div
     class="carousel"
     role="region"
@@ -72,30 +64,25 @@
     (touchend)="onTouchEnd($event)"
   >
     <div class="carousel-track" [style.transform]="'translateX(' + (-carouselIndex() * 100) + '%)'">
-      <!-- Foto real -->
-      <div class="carousel-slide" role="group" aria-label="Foto 1">
-        <div class="photo-card photo-card--image">
-          <img ngSrc="/photos/foto-marce-y-dani.jpeg" fill priority alt="Marce y Dani" style="object-fit: cover;">
-        </div>
-      </div>
-      <!-- Placeholders -->
-      @for (photo of recentPhotos; track photo) {
-        <div class="carousel-slide" role="group" [attr.aria-label]="'Foto ' + ($index + 2) + ' de ' + totalSlides()">
-          <div class="photo-card">
-            <i class="bi bi-image" aria-hidden="true"></i>
+
+      @for (photo of recentPhotos(); track photo.id) {
+        <div class="carousel-slide" role="group" [attr.aria-label]="'Foto ' + ($index + 1)">
+          <div class="photo-card photo-card--image">
+            <img [src]="photo.url" alt="Recuerdo" style="width:100%;height:100%;object-fit:cover;">
           </div>
         </div>
       }
-      <div class="carousel-slide" role="group" [attr.aria-label]="'Agregar foto'">
+
+      <div class="carousel-slide" role="group" aria-label="Agregar foto">
         <a routerLink="/upload" class="upload-card" aria-label="Agregar foto">
           <i class="bi bi-plus" aria-hidden="true"></i>
           <span>Agregar</span>
         </a>
       </div>
+
     </div>
   </div>
 
-  <!-- Dots -->
   <div class="carousel-dots" role="tablist" aria-label="Navegación">
     @for (dot of carouselDots(); track $index) {
       <button
