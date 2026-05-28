@@ -1,33 +1,36 @@
 :host {
   display: block;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* ---- Page ---- */
 .page {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
   padding-top: env(safe-area-inset-top);
-  padding-bottom: 16px;
 }
 
 /* ---- Top line ---- */
 .top-line {
   height: 1px;
-  margin: clamp(6px, 1.5dvh, 14px) 28px 0;
+  margin: clamp(4px, 1dvh, 10px) 28px 0;
   background: linear-gradient(to right, transparent, rgba(201, 169, 110, 0.35), rgba(196, 123, 141, 0.25), transparent);
   flex-shrink: 0;
 }
 
 /* ---- Hero ---- */
 .hero {
-  padding: clamp(8px, 1.8dvh, 16px) 24px 0;
+  padding: clamp(5px, 1.2dvh, 12px) 24px 0;
   text-align: center;
   flex-shrink: 0;
 }
 
 .couple-name {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(30px, 8.5vw, 50px);
+  font-size: clamp(26px, 7vw, 44px);
   font-weight: 300;
   letter-spacing: 0.08em;
   color: #f5ede8;
@@ -44,7 +47,7 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(245, 237, 232, 0.38);
-  margin: 0 0 clamp(6px, 1dvh, 10px);
+  margin: 0 0 clamp(4px, 0.7dvh, 8px);
 }
 
 /* ---- Counter ---- */
@@ -52,13 +55,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(2px, 0.5dvh, 6px);
-  margin-bottom: clamp(4px, 0.8dvh, 8px);
+  gap: clamp(2px, 0.4dvh, 5px);
+  margin-bottom: clamp(2px, 0.5dvh, 6px);
 }
 
 .days-number {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(68px, 13dvh, 108px);
+  font-size: clamp(54px, 11dvh, 96px);
   font-weight: 300;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -70,17 +73,17 @@
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: rgba(245, 237, 232, 0.38);
-  padding-top: clamp(4px, 0.8dvh, 10px);
+  padding-top: clamp(2px, 0.4dvh, 6px);
 }
 
 .time-display {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(17px, 4.8vw, 24px);
+  font-size: clamp(15px, 4vw, 21px);
   font-weight: 300;
   letter-spacing: 0.18em;
   color: #c9a96e;
   font-variant-numeric: tabular-nums;
-  margin-bottom: clamp(12px, 2dvh, 26px);
+  margin-bottom: clamp(8px, 1.5dvh, 20px);
 }
 
 /* ---- Progress ---- */
@@ -93,7 +96,7 @@
   height: 3px;
   background: rgba(245, 237, 232, 0.1);
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .progress-fill {
@@ -116,13 +119,13 @@
 .soft-divider {
   height: 1px;
   background: rgba(245, 237, 232, 0.07);
-  margin: clamp(10px, 2dvh, 22px) 0;
+  margin: clamp(6px, 1.2dvh, 16px) 0;
   flex-shrink: 0;
 }
 
 .section-line {
   height: 1px;
-  margin: 0 28px clamp(8px, 1.2dvh, 16px);
+  margin: 0 28px clamp(4px, 0.8dvh, 10px);
   background: linear-gradient(to right, transparent, rgba(201, 169, 110, 0.35), rgba(196, 123, 141, 0.25), transparent);
   flex-shrink: 0;
 }
@@ -133,7 +136,7 @@
   text-transform: uppercase;
   color: rgba(245, 237, 232, 0.25);
   padding: 0 24px;
-  margin: 0 0 clamp(8px, 1.2dvh, 16px);
+  margin: 0 0 clamp(4px, 0.8dvh, 10px);
   flex-shrink: 0;
 }
 
@@ -143,7 +146,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 16px;
-  margin-bottom: clamp(8px, 1.5dvh, 16px);
+  margin-bottom: clamp(4px, 1dvh, 12px);
   flex-shrink: 0;
 }
 
@@ -152,20 +155,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: clamp(6px, 1.2dvh, 12px) 8px;
+  gap: 4px;
+  padding: clamp(4px, 0.9dvh, 10px) 8px;
 }
 
 .stat-sep {
   width: 1px;
-  height: 38px;
+  height: 34px;
   background: rgba(245, 237, 232, 0.09);
   flex-shrink: 0;
 }
 
 .stat-val {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(30px, 10vw, 46px);
+  font-size: clamp(26px, 8.5vw, 40px);
   font-weight: 300;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -184,7 +187,8 @@
 
 /* ---- Carousel ---- */
 .carousel {
-  height: clamp(220px, 54vw, 340px);
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
   touch-action: pan-y;
 }
@@ -257,7 +261,7 @@
   display: flex;
   justify-content: center;
   gap: 7px;
-  margin: clamp(8px, 1.2dvh, 14px) 0 0;
+  margin: clamp(4px, 0.8dvh, 10px) 0 0;
   flex-shrink: 0;
 }
 
@@ -277,4 +281,4 @@
   transform: scale(1.5);
 }
 
-.spacer { height: clamp(8px, 1.2dvh, 16px); flex-shrink: 0; }
+.spacer { height: clamp(4px, 0.8dvh, 12px); flex-shrink: 0; }
