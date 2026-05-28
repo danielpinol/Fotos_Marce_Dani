@@ -1,7 +1,11 @@
 :host {
   display: block;
-  position: sticky;
+  position: fixed;
   bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
   z-index: 20;
 }
 
