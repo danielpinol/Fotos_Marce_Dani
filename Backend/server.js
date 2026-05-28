@@ -1,33 +1,14 @@
 require('dotenv').config();
 const express = require('express');
-const multer = require('multer');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const { Album, Photo } = require('./models');
 
 mongoose.connect(process.env.MONGODB_URI);
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'nuestro-museo',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'heic'],
-    transformation: [{ width: 1200, crop: 'limit', quality: 'auto:good' }],
-  },
-});
-const upload = multer({ storage });
 
 function fmtAlbum(doc) {
   const o = doc.toObject();
@@ -60,11 +41,11 @@ app.delete('/api/albums/:id', async (req, res) => {
 });
 
 // ── Photos ───────────────────────────────────────────────────
-app.post('/api/photos', upload.single('photo'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'no file' });
-  const url = req.file.path;
-  const photo = await Photo.create({ albumId: req.body.albumId, url });
-  const album = await Album.findById(req.body.albumId);
+app.post('/api/photos', async (req, res) => {
+  const { albumId, url } = req.body;
+  if (!url) return res.status(400).json({ error: 'url required' });
+  const photo = await Photo.create({ albumId, url });
+  const album = await Album.findById(albumId);
   if (album) {
     album.photoCount++;
     if (album.covers.length < 4) album.covers.push(url);

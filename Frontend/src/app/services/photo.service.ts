@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, of, switchMap } from 'rxjs';
 
 export interface Album {
   id: string;
@@ -18,16 +18,12 @@ export interface Photo {
   createdAt: string;
 }
 
-// En Vercel las rutas son relativas al mismo dominio.
-// En localhost apunta al backend local.
 const API = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
   ? ''
   : 'http://localhost:3000';
 
-// Cloudinary URLs ya son absolutas; URLs locales (/uploads/...) necesitan el prefijo.
-function absUrl(path: string): string {
-  return path.startsWith('http') ? path : `${API}${path}`;
-}
+const CLOUDINARY_CLOUD = 'dtofbkdzb';
+const CLOUDINARY_PRESET = 'nuestro_museo';
 
 @Injectable({ providedIn: 'root' })
 export class PhotoService {
@@ -35,7 +31,6 @@ export class PhotoService {
 
   getAlbums() {
     return this.http.get<Album[]>(`${API}/api/albums`).pipe(
-      map(albums => albums.map(a => ({ ...a, covers: a.covers.map(absUrl) }))),
       catchError(() => of([] as Album[])),
     );
   }
@@ -49,15 +44,27 @@ export class PhotoService {
   }
 
   uploadPhoto(albumId: string, file: File) {
-    const form = new FormData();
-    form.append('photo', file);
-    form.append('albumId', albumId);
-    return this.http.post<Photo>(`${API}/api/photos`, form);
+    // 1. Subir archivo directo a Cloudinary desde el celular
+    const cloudForm = new FormData();
+    cloudForm.append('file', file);
+    cloudForm.append('upload_preset', CLOUDINARY_PRESET);
+
+    return this.http
+      .post<{ secure_url: string }>(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+        cloudForm,
+      )
+      .pipe(
+        // 2. Guardar solo la URL en MongoDB via backend
+        switchMap(({ secure_url }) =>
+          this.http.post<Photo>(`${API}/api/photos`, { albumId, url: secure_url }),
+        ),
+      );
   }
 
   getRecentPhotos() {
     return this.http.get<Photo[]>(`${API}/api/photos/recent`).pipe(
-      map(photos => photos.map(p => ({ ...p, url: absUrl(p.url) }))),
+      map(photos => photos.map(p => ({ ...p }))),
       catchError(() => of([] as Photo[])),
     );
   }
