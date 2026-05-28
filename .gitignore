@@ -1,0 +1,5 @@
+node_modules/
+.env
+*.env
+Backend/uploads/
+Backend/db.json

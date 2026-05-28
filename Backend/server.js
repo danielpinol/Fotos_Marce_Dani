@@ -1,91 +1,81 @@
+require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
+const mongoose = require('mongoose');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const { Album, Photo } = require('./models');
+
+mongoose.connect(process.env.MONGODB_URI);
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
-const DB_FILE = path.join(__dirname, 'db.json');
-
-if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
-
-function readDB() {
-  try { return JSON.parse(fs.readFileSync(DB_FILE, 'utf8')); }
-  catch { return { albums: [], photos: [] }; }
-}
-
-function writeDB(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-}
-
-app.use('/uploads', express.static(UPLOADS_DIR));
-
-const storage = multer.diskStorage({
-  destination: UPLOADS_DIR,
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'nuestro-museo',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'heic'],
+    transformation: [{ width: 1200, crop: 'limit', quality: 'auto:good' }],
   },
 });
-const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
+const upload = multer({ storage });
 
-// ── Albums ───────────────────────────────────────────────
-app.get('/api/albums', (req, res) => {
-  res.json(readDB().albums);
+function fmtAlbum(doc) {
+  const o = doc.toObject();
+  return { id: o._id.toString(), title: o.title, description: o.description,
+           photoCount: o.photoCount, covers: o.covers, createdAt: o.createdAt.toISOString() };
+}
+function fmtPhoto(doc) {
+  const o = doc.toObject();
+  return { id: o._id.toString(), albumId: o.albumId?.toString(),
+           url: o.url, createdAt: o.createdAt.toISOString() };
+}
+
+// ── Albums ───────────────────────────────────────────────────
+app.get('/api/albums', async (req, res) => {
+  const albums = await Album.find().sort({ createdAt: 1 });
+  res.json(albums.map(fmtAlbum));
 });
 
-app.post('/api/albums', (req, res) => {
+app.post('/api/albums', async (req, res) => {
   const { title, description } = req.body;
   if (!title) return res.status(400).json({ error: 'title required' });
-  const db = readDB();
-  const album = {
-    id: String(Date.now()),
-    title,
-    description: description || '',
-    photoCount: 0,
-    createdAt: new Date().toISOString(),
-    covers: [],
-  };
-  db.albums.push(album);
-  writeDB(db);
-  res.json(album);
+  const album = await Album.create({ title, description });
+  res.json(fmtAlbum(album));
 });
 
-app.delete('/api/albums/:id', (req, res) => {
-  const db = readDB();
-  db.albums = db.albums.filter(a => String(a.id) !== req.params.id);
-  db.photos = db.photos.filter(p => String(p.albumId) !== req.params.id);
-  writeDB(db);
+app.delete('/api/albums/:id', async (req, res) => {
+  await Album.findByIdAndDelete(req.params.id);
+  await Photo.deleteMany({ albumId: req.params.id });
   res.json({ ok: true });
 });
 
-// ── Photos ───────────────────────────────────────────────
-app.post('/api/photos', upload.single('photo'), (req, res) => {
+// ── Photos ───────────────────────────────────────────────────
+app.post('/api/photos', upload.single('photo'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'no file' });
-  const db = readDB();
-  const albumId = req.body.albumId;
-  const photo = {
-    id: String(Date.now()),
-    albumId,
-    url: `/uploads/${req.file.filename}`,
-    createdAt: new Date().toISOString(),
-  };
-  db.photos.push(photo);
-  const album = db.albums.find(a => a.id === albumId);
+  const url = req.file.path;
+  const photo = await Photo.create({ albumId: req.body.albumId, url });
+  const album = await Album.findById(req.body.albumId);
   if (album) {
     album.photoCount++;
-    if (album.covers.length < 4) album.covers.push(photo.url);
+    if (album.covers.length < 4) album.covers.push(url);
+    await album.save();
   }
-  writeDB(db);
-  res.json(photo);
+  res.json(fmtPhoto(photo));
 });
 
-app.get('/api/photos/recent', (req, res) => {
-  const db = readDB();
-  res.json([...db.photos].reverse().slice(0, 12));
+app.get('/api/photos/recent', async (req, res) => {
+  const photos = await Photo.find().sort({ createdAt: -1 }).limit(12);
+  res.json(photos.map(fmtPhoto));
 });
 
 const PORT = process.env.PORT || 3000;
