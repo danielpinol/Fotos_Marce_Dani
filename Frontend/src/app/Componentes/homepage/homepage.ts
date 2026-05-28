@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 const ANNIVERSARY = new Date('2026-02-10T00:00:00');
@@ -6,7 +7,7 @@ const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 @Component({
   selector: 'app-homepage',
-  imports: [RouterLink],
+  imports: [RouterLink, NgOptimizedImage],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,7 +53,31 @@ export class Homepage implements OnDestroy {
     return Math.min(100, Math.round((elapsed / ONE_YEAR_MS) * 100));
   });
 
-  readonly recentPhotos = [1, 2, 3, 4];
+  readonly recentPhotos = [1, 2, 3];
+
+  readonly carouselIndex = signal(0);
+  readonly totalSlides = computed(() => 1 + this.recentPhotos.length + 1);
+  readonly carouselDots = computed(() => Array(this.totalSlides()).fill(0));
+
+  private touchStartX = 0;
+
+  onTouchStart(e: TouchEvent): void {
+    this.touchStartX = e.touches[0].clientX;
+  }
+
+  onTouchEnd(e: TouchEvent): void {
+    const delta = this.touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(delta) < 40) return;
+    if (delta > 0) {
+      this.carouselIndex.update(i => Math.min(i + 1, this.totalSlides() - 1));
+    } else {
+      this.carouselIndex.update(i => Math.max(i - 1, 0));
+    }
+  }
+
+  goToSlide(index: number): void {
+    this.carouselIndex.set(index);
+  }
 
   ngOnDestroy() {
     clearInterval(this.timer);

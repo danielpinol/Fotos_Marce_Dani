@@ -1,57 +1,112 @@
 <div class="page">
 
+  <!-- Decorativo superior -->
+  <div class="top-line" aria-hidden="true"></div>
+
   <!-- Hero -->
-  <div class="hero">
-    <div class="hero-meta">
-      <span class="live-dot"></span> Desde el 10 de febrero de 2026
+  <section class="hero" aria-label="Contador de tiempo juntos">
+    <h1 class="couple-name">
+      Marche <span class="amp">&amp;</span> Dani
+    </h1>
+    <p class="since-label">Juntos desde el 10 de febrero, 2026</p>
+
+    <div class="counter-block">
+      <span class="days-number">{{ days() }}</span>
+      <span class="days-label">días juntos</span>
     </div>
-    <h1 class="hero-title">MARCHE Y <span class="accent">DANI</span></h1>
-    <div class="bignum">
-      {{ days() }}
-      <span class="label">days</span>
-      <span class="hours">{{ timeString() }}</span>
+
+    <div class="time-display" aria-live="polite" aria-label="Tiempo exacto juntos">
+      {{ timeString() }}
     </div>
-    <div class="pbar-wrap">
-      <div class="pbar-fill" [style.width]="yearProgress() + '%'"></div>
+
+    <div class="progress-section">
+      <div
+        class="progress-track"
+        role="progressbar"
+        [attr.aria-valuenow]="yearProgress()"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-label]="yearProgress() + '% del primer año juntos'"
+      >
+        <div class="progress-fill" [style.width]="yearProgress() + '%'"></div>
+      </div>
+      <div class="progress-labels">
+        <span>10 feb 2026</span>
+        <span class="progress-pct">{{ yearProgress() }}% para el primer año</span>
+        <span>10 feb 2027</span>
+      </div>
     </div>
-    <div class="pbar-meta">
-      <span>10 feb 2026</span>
-      <span class="accent-text">{{ yearProgress() }}% para el primer año</span>
-      <span>10 feb 2027</span>
-    </div>
-  </div>
+  </section>
+
+  <!-- Divisor -->
+  <div class="soft-divider" aria-hidden="true"></div>
 
   <!-- Stats -->
-  <div class="stats-row">
-    <div class="stat">
-      <div class="stat-label">Months</div>
-      <div class="stat-val pink">{{ months() }}</div>
+  <div class="stats-row" role="list" aria-label="Estadísticas">
+    <div class="stat" role="listitem">
+      <span class="stat-val">{{ months() }}</span>
+      <span class="stat-label">Meses</span>
     </div>
-    <div class="stat">
-      <div class="stat-label">Weeks</div>
-      <div class="stat-val">{{ weeks() }}</div>
+    <div class="stat-sep" aria-hidden="true"></div>
+    <div class="stat" role="listitem">
+      <span class="stat-val gold">{{ weeks() }}</span>
+      <span class="stat-label">Semanas</span>
     </div>
-    <div class="stat">
-      <div class="stat-label">Pics</div>
-      <div class="stat-val purple">0</div>
+    <div class="stat-sep" aria-hidden="true"></div>
+    <div class="stat" role="listitem">
+      <span class="stat-val rose">0</span>
+      <span class="stat-label">Recuerdos</span>
     </div>
   </div>
 
-  <!-- Últimas fotos -->
-  <div class="section-label">
-    Last pics <span class="count">0</span>
-  </div>
+  <!-- Separador + encabezado de sección -->
+  <div class="section-line" aria-hidden="true"></div>
+  <p class="section-title">Últimos recuerdos</p>
 
-  <div class="photos-scroll">
-    @for (photo of recentPhotos; track photo) {
-      <div class="photo-card">
-        <i class="bi bi-image"></i>
+  <!-- Carrusel de fotos -->
+  <div
+    class="carousel"
+    role="region"
+    aria-label="Fotos recientes"
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)"
+  >
+    <div class="carousel-track" [style.transform]="'translateX(' + (-carouselIndex() * 100) + '%)'">
+      <!-- Foto real -->
+      <div class="carousel-slide" role="group" aria-label="Foto 1">
+        <div class="photo-card photo-card--image">
+          <img ngSrc="/photos/foto-marce-y-dani.jpeg" fill priority alt="Marce y Dani" style="object-fit: cover;">
+        </div>
       </div>
+      <!-- Placeholders -->
+      @for (photo of recentPhotos; track photo) {
+        <div class="carousel-slide" role="group" [attr.aria-label]="'Foto ' + ($index + 2) + ' de ' + totalSlides()">
+          <div class="photo-card">
+            <i class="bi bi-image" aria-hidden="true"></i>
+          </div>
+        </div>
+      }
+      <div class="carousel-slide" role="group" [attr.aria-label]="'Agregar foto'">
+        <a routerLink="/upload" class="upload-card" aria-label="Agregar foto">
+          <i class="bi bi-plus" aria-hidden="true"></i>
+          <span>Agregar</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dots -->
+  <div class="carousel-dots" role="tablist" aria-label="Navegación">
+    @for (dot of carouselDots(); track $index) {
+      <button
+        class="dot"
+        [class.dot-active]="carouselIndex() === $index"
+        (click)="goToSlide($index)"
+        role="tab"
+        [attr.aria-selected]="carouselIndex() === $index"
+        [attr.aria-label]="'Ir a foto ' + ($index + 1)"
+      ></button>
     }
-    <a routerLink="/upload" class="upload-card">
-      <i class="bi bi-plus-circle"></i>
-      <span>Upload pic</span>
-    </a>
   </div>
 
   <div class="spacer"></div>

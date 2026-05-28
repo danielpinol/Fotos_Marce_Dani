@@ -9,13 +9,13 @@
   width: 100%;
   max-width: 480px;
   min-height: 100vh;
-  background-color: #0d0d12;
+  background-color: #0e0a0d;
   background-image:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(180, 130, 70, 0.14) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(110, 45, 65, 0.13) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 60% 40%, rgba(170, 110, 55, 0.06) 0%, transparent 50%);
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+    radial-gradient(ellipse 90% 55% at 50% 0%,  rgba(180, 90, 115, 0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 10% 85%, rgba(195, 155, 80,  0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 90% 60%, rgba(160, 70,  95,  0.10) 0%, transparent 55%);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
 }
