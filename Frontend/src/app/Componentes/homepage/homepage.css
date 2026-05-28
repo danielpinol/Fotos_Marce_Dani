@@ -61,6 +61,7 @@
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: rgba(245, 237, 232, 0.38);
+  padding-top: 12px;
 }
 
 .time-display {
