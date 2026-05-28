@@ -62,6 +62,12 @@ export class PhotoService {
       );
   }
 
+  getAllPhotos() {
+    return this.http.get<Photo[]>(`${API}/api/photos`).pipe(
+      catchError(() => of([] as Photo[])),
+    );
+  }
+
   getRecentPhotos() {
     return this.http.get<Photo[]>(`${API}/api/photos/recent`).pipe(
       map(photos => photos.map(p => ({ ...p }))),

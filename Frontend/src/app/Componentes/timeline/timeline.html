@@ -1,1 +1,39 @@
-<p>timeline works!</p>
+<div class="page">
+
+  <div class="header">
+    <h1 class="title">Historia</h1>
+    <div class="divider"></div>
+  </div>
+
+  @if (photos().length === 0) {
+    <div class="empty">
+      <i class="bi bi-clock-history empty-icon" aria-hidden="true"></i>
+      <p class="empty-text">Aún no hay recuerdos</p>
+      <p class="empty-sub">Sube fotos para empezar tu historia</p>
+    </div>
+  } @else {
+    @for (group of groups(); track group.label) {
+      <div class="month-group">
+        <div class="month-header">
+          <span class="month-label">{{ group.label }}</span>
+          <span class="month-count">{{ group.photos.length }}</span>
+        </div>
+
+        <div class="month-photos">
+          @for (photo of group.photos; track photo.id) {
+            <div class="photo-row">
+              <div class="photo-thumb">
+                <img [src]="photo.url" alt="Recuerdo" loading="lazy">
+              </div>
+              <div class="photo-info">
+                <span class="photo-album">{{ albumName(photo.albumId) }}</span>
+                <span class="photo-date">{{ formatDate(photo.createdAt) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+
+</div>

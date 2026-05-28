@@ -65,6 +65,11 @@ app.post('/api/photos', async (req, res) => {
   res.json(fmtPhoto(photo));
 });
 
+app.get('/api/photos', async (req, res) => {
+  const photos = await Photo.find().sort({ createdAt: -1 });
+  res.json(photos.map(fmtPhoto));
+});
+
 app.get('/api/photos/recent', async (req, res) => {
   const photos = await Photo.find().sort({ createdAt: -1 }).limit(12);
   res.json(photos.map(fmtPhoto));

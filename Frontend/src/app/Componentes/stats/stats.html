@@ -1,1 +1,50 @@
-<p>stats works!</p>
+<div class="page">
+
+  <div class="header">
+    <p class="since">Desde el 10 de febrero, 2026</p>
+    <h1 class="couple">Marche <span class="amp">&amp;</span> Dani</h1>
+    <div class="divider"></div>
+  </div>
+
+  <!-- Días juntos -->
+  <div class="hero">
+    <span class="hero-number">{{ days() }}</span>
+    <span class="hero-label">días juntos</span>
+    <span class="hero-time">{{ timeString() }}</span>
+  </div>
+
+  <!-- Grid de stats -->
+  <div class="stats-grid">
+    <div class="stat-box">
+      <span class="stat-num">{{ months() }}</span>
+      <span class="stat-lbl">Meses</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">{{ weeks() }}</span>
+      <span class="stat-lbl">Semanas</span>
+    </div>
+    <div class="stat-box stat-box--gold">
+      <span class="stat-num">{{ photos().length }}</span>
+      <span class="stat-lbl">Fotos</span>
+    </div>
+    <div class="stat-box stat-box--rose">
+      <span class="stat-num">{{ albums().length }}</span>
+      <span class="stat-lbl">Capítulos</span>
+    </div>
+  </div>
+
+  <!-- Primer recuerdo -->
+  @if (firstPhoto()) {
+    <div class="memory-section">
+      <div class="memory-rule"></div>
+      <p class="memory-label">Primer recuerdo</p>
+      <div class="memory-card">
+        <div class="memory-img">
+          <img [src]="firstPhoto()!.url" alt="Primer recuerdo">
+        </div>
+        <p class="memory-date">{{ firstPhotoDate() }}</p>
+      </div>
+    </div>
+  }
+
+</div>

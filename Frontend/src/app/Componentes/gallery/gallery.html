@@ -1,1 +1,66 @@
-<p>gallery works!</p>
+<div class="page">
+
+  <div class="header">
+    <h1 class="title">Galería</h1>
+    <div class="divider"></div>
+  </div>
+
+  @if (albums().length > 0) {
+    <div class="filters" role="list" aria-label="Filtrar por capítulo">
+      <button class="pill" [class.pill--active]="filterAlbumId() === null" (click)="setFilter(null)">
+        Todas
+      </button>
+      @for (album of albums(); track album.id) {
+        <button class="pill" [class.pill--active]="filterAlbumId() === album.id" (click)="setFilter(album.id)">
+          {{ album.title }}
+        </button>
+      }
+    </div>
+  }
+
+  @if (filtered().length === 0) {
+    <div class="empty">
+      <i class="bi bi-images empty-icon" aria-hidden="true"></i>
+      <p class="empty-text">Aún no hay fotos</p>
+      <p class="empty-sub">Sube recuerdos desde el botón +</p>
+    </div>
+  } @else {
+    <div class="grid" role="list">
+      @for (photo of filtered(); track photo.id; let i = $index) {
+        <button class="thumb" role="listitem" (click)="open(i)" [attr.aria-label]="'Ver foto ' + (i + 1)">
+          <img [src]="photo.url" alt="Recuerdo" loading="lazy">
+        </button>
+      }
+    </div>
+  }
+
+</div>
+
+@if (lightboxPhoto()) {
+  <div
+    class="lightbox"
+    role="dialog"
+    aria-modal="true"
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)"
+  >
+    <div class="lb-backdrop" (click)="close()" aria-hidden="true"></div>
+    <img [src]="lightboxPhoto()!.url" alt="Recuerdo" class="lb-img">
+    <button class="lb-close" (click)="close()" aria-label="Cerrar">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    @if (lightboxIndex()! > 0) {
+      <button class="lb-prev" (click)="prev()" aria-label="Anterior">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    }
+    @if (lightboxIndex()! < filtered().length - 1) {
+      <button class="lb-next" (click)="next()" aria-label="Siguiente">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    }
+    <div class="lb-info">
+      <span class="lb-album">{{ albumName(lightboxPhoto()!.albumId) }}</span>
+    </div>
+  </div>
+}
