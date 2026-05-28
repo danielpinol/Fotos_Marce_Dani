@@ -1,14 +1,16 @@
 :host {
   display: flex;
-  min-height: 100vh;
+  height: 100dvh;
   justify-content: center;
+  overflow: hidden;
 }
 
 .app-shell {
   position: relative;
   width: 100%;
   max-width: 480px;
-  height: 100dvh;
+  height: 100%;
+  overflow: hidden;
   background-color: #0e0a0d;
   background-image:
     radial-gradient(ellipse 90% 55% at 50% 0%,  rgba(180, 90, 115, 0.22) 0%, transparent 65%),
