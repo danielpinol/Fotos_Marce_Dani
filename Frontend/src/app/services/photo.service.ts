@@ -15,6 +15,7 @@ export interface Photo {
   id: string;
   albumId: string;
   url: string;
+  caption: string;
   createdAt: string;
 }
 
@@ -44,22 +45,29 @@ export class PhotoService {
   }
 
   uploadPhoto(albumId: string, file: File) {
-    // 1. Subir archivo directo a Cloudinary desde el celular
     const cloudForm = new FormData();
     cloudForm.append('file', file);
     cloudForm.append('upload_preset', CLOUDINARY_PRESET);
-
     return this.http
       .post<{ secure_url: string }>(
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
         cloudForm,
       )
       .pipe(
-        // 2. Guardar solo la URL en MongoDB via backend
         switchMap(({ secure_url }) =>
           this.http.post<Photo>(`${API}/api/photos`, { albumId, url: secure_url }),
         ),
       );
+  }
+
+  getAlbumPhotos(albumId: string) {
+    return this.http.get<Photo[]>(`${API}/api/albums/${albumId}/photos`).pipe(
+      catchError(() => of([] as Photo[])),
+    );
+  }
+
+  updateCaption(photoId: string, caption: string) {
+    return this.http.patch<Photo>(`${API}/api/photos/${photoId}/caption`, { caption });
   }
 
   getAllPhotos() {

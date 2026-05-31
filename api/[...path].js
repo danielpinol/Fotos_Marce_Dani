@@ -28,7 +28,7 @@ function fmtAlbum(doc) {
 function fmtPhoto(doc) {
   const o = doc.toObject();
   return { id: o._id.toString(), albumId: o.albumId?.toString(),
-           url: o.url, createdAt: o.createdAt.toISOString() };
+           url: o.url, caption: o.caption ?? '', createdAt: o.createdAt.toISOString() };
 }
 
 // ── Albums ───────────────────────────────────────────────────
@@ -51,7 +51,6 @@ app.delete('/api/albums/:id', async (req, res) => {
 });
 
 // ── Photos ───────────────────────────────────────────────────
-// La foto ya fue subida a Cloudinary desde el frontend; aquí solo guardamos la URL.
 app.post('/api/photos', async (req, res) => {
   const { albumId, url } = req.body;
   if (!url) return res.status(400).json({ error: 'url required' });
@@ -62,6 +61,21 @@ app.post('/api/photos', async (req, res) => {
     if (album.covers.length < 4) album.covers.push(url);
     await album.save();
   }
+  res.json(fmtPhoto(photo));
+});
+
+app.get('/api/albums/:id/photos', async (req, res) => {
+  const photos = await Photo.find({ albumId: req.params.id }).sort({ createdAt: 1 });
+  res.json(photos.map(fmtPhoto));
+});
+
+app.patch('/api/photos/:id/caption', async (req, res) => {
+  const photo = await Photo.findByIdAndUpdate(
+    req.params.id,
+    { caption: req.body.caption ?? '' },
+    { new: true }
+  );
+  if (!photo) return res.status(404).json({ error: 'not found' });
   res.json(fmtPhoto(photo));
 });
 

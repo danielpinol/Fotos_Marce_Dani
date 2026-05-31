@@ -11,6 +11,7 @@ const albumSchema = new mongoose.Schema({
 const photoSchema = new mongoose.Schema({
   albumId:   mongoose.Schema.Types.ObjectId,
   url:       String,
+  caption:   { type: String, default: '' },
   createdAt: { type: Date, default: Date.now },
 });
 

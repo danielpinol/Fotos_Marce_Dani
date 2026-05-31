@@ -1,10 +1,9 @@
 <div class="pb-24">
 
-  <!-- Header -->
   <div class="px-6 pt-6 pb-2">
     <div class="flex items-end justify-between mb-3">
       <h1 class="[font-family:'Cormorant_Garamond',Georgia,serif] text-[44px] font-light italic text-[#f5ede8] leading-none tracking-[0.02em]">
-        Albums
+        Capítulos
       </h1>
       <p class="[font-family:'Cormorant_Garamond',Georgia,serif] text-[13px] italic text-[rgba(201,169,110,0.5)] pb-1.5">
         {{ albums().length }} capítulos
@@ -13,7 +12,6 @@
     <div class="h-px bg-gradient-to-r from-[rgba(201,169,110,0.4)] via-[rgba(196,123,141,0.2)] to-transparent"></div>
   </div>
 
-  <!-- Lista -->
   <div class="px-6 mt-4">
 
     @if (albums().length === 0) {
@@ -29,50 +27,30 @@
       <button
         class="chapter-card"
         type="button"
+        (click)="openAlbum(album.id)"
         [attr.aria-label]="'Abrir capítulo ' + roman(idx + 1) + ': ' + album.title"
       >
         <div class="chapter-accent"></div>
-
-        <!-- Mosaico -->
-        <div class="chapter-mosaic">
-          <div class="mosaic-grid">
-            @for (slot of coverSlots(album.covers); track $index) {
-              <div class="mosaic-cell">
-                @if (slot) {
-                  <img [src]="slot" [alt]="album.title">
-                } @else {
-                  <i class="bi bi-image" aria-hidden="true"></i>
-                }
-              </div>
-            }
-          </div>
-          <span class="chapter-watermark" aria-hidden="true">{{ roman(idx + 1) }}</span>
-          <div class="mosaic-fade"></div>
-        </div>
-
-        <!-- Info -->
-        <div class="chapter-info">
-          <div class="chapter-meta">
-            <span class="chapter-label">Capítulo {{ roman(idx + 1) }}</span>
-            <span class="chapter-count">{{ album.photoCount }} fotos</span>
+        <div class="chapter-body">
+          <div class="chapter-top">
+            <span class="chapter-num">Capítulo {{ roman(idx + 1) }}</span>
+            <button
+              type="button"
+              class="chapter-delete"
+              (click)="confirmDelete(album, $event)"
+              [attr.aria-label]="'Eliminar ' + album.title"
+            >
+              <i class="bi bi-trash3" aria-hidden="true"></i>
+            </button>
           </div>
           <h2 class="chapter-title">{{ album.title }}</h2>
           @if (album.description) {
             <p class="chapter-desc">{{ album.description }}</p>
           }
           <div class="chapter-footer">
-            <span class="chapter-date">Desde {{ album.createdAt | date:'MMM yyyy' }}</span>
-            <div class="flex items-center gap-3">
-              <button
-                type="button"
-                class="chapter-delete"
-                (click)="confirmDelete(album, $event)"
-                [attr.aria-label]="'Eliminar ' + album.title"
-              >
-                <i class="bi bi-trash3" aria-hidden="true"></i>
-              </button>
-              <i class="bi bi-chevron-right chapter-arrow" aria-hidden="true"></i>
-            </div>
+            <span class="chapter-date">{{ album.createdAt | date:'MMM yyyy' }}</span>
+            <span class="chapter-count">{{ album.photoCount }} fotos</span>
+            <i class="bi bi-chevron-right chapter-arrow" aria-hidden="true"></i>
           </div>
         </div>
       </button>
@@ -86,7 +64,6 @@
   </div>
 </div>
 
-<!-- Confirmación eliminar -->
 @if (albumToDelete()) {
   <div class="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Confirmar eliminación">
     <div class="absolute inset-0" (click)="cancelDelete()" aria-hidden="true"></div>
@@ -105,17 +82,13 @@
   </div>
 }
 
-<!-- Bottom sheet -->
 @if (showForm()) {
   <div class="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Crear nuevo capítulo">
     <div class="absolute inset-0" (click)="closeForm()" aria-hidden="true"></div>
-
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
-
       <h2 class="sheet-title">Nuevo capítulo</h2>
       <p class="sheet-subtitle">Capítulo {{ roman(albums().length + 1) }}</p>
-
       <div class="field">
         <label class="field-label" for="album-title">Nombre</label>
         <input
@@ -129,7 +102,6 @@
           autocomplete="off"
         >
       </div>
-
       <div class="field">
         <label class="field-label" for="album-desc">
           Descripción <span style="text-transform:none;letter-spacing:0;color:rgba(245,237,232,0.22);font-size:9px">(opcional)</span>
@@ -145,7 +117,6 @@
           autocomplete="off"
         >
       </div>
-
       <div class="sheet-actions">
         <button class="btn-cancel" type="button" (click)="closeForm()">Cancelar</button>
         <button class="btn-create" type="button" (click)="createAlbum()" [disabled]="!newTitle().trim()">Crear</button>

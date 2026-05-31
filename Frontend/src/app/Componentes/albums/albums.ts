@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PhotoService, Album } from '../../services/photo.service';
 
@@ -15,6 +15,7 @@ const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
 })
 export class Albums {
   private readonly photoService = inject(PhotoService);
+  private readonly router = inject(Router);
 
   readonly albums = signal<Album[]>([]);
   readonly showForm = signal(false);
@@ -26,13 +27,9 @@ export class Albums {
     this.photoService.getAlbums().subscribe(albums => this.albums.set(albums));
   }
 
-  roman(n: number): string {
-    return ROMAN[n - 1] ?? String(n);
-  }
+  roman(n: number): string { return ROMAN[n - 1] ?? String(n); }
 
-  coverSlots(covers: string[]): (string | null)[] {
-    return [0, 1, 2, 3].map(i => covers[i] ?? null);
-  }
+  openAlbum(id: string): void { this.router.navigate(['/albums', id]); }
 
   openForm(): void {
     this.newTitle.set('');
@@ -40,18 +37,14 @@ export class Albums {
     this.showForm.set(true);
   }
 
-  closeForm(): void {
-    this.showForm.set(false);
-  }
+  closeForm(): void { this.showForm.set(false); }
 
   confirmDelete(album: Album, e: Event): void {
     e.stopPropagation();
     this.albumToDelete.set(album);
   }
 
-  cancelDelete(): void {
-    this.albumToDelete.set(null);
-  }
+  cancelDelete(): void { this.albumToDelete.set(null); }
 
   deleteAlbum(): void {
     const target = this.albumToDelete();

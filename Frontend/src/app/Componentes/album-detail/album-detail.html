@@ -1,0 +1,95 @@
+<div class="page">
+
+  <div class="header">
+    <a routerLink="/albums" class="back-btn" aria-label="Volver a capítulos">
+      <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      <span>Capítulos</span>
+    </a>
+
+    @if (album()) {
+      <div class="album-hero">
+        <p class="chapter-label">{{ album()!.title }}</p>
+        @if (album()!.description) {
+          <p class="album-desc">{{ album()!.description }}</p>
+        }
+        <p class="album-meta">{{ photos().length }} fotos</p>
+      </div>
+      <div class="divider"></div>
+    }
+  </div>
+
+  @if (photos().length === 0) {
+    <div class="empty">
+      <i class="bi bi-camera empty-icon" aria-hidden="true"></i>
+      <p class="empty-text">Este capítulo está vacío</p>
+      <p class="empty-sub">Sube fotos desde el botón +</p>
+    </div>
+  } @else {
+    <div class="grid" role="list">
+      @for (photo of photos(); track photo.id; let i = $index) {
+        <button class="thumb" role="listitem" (click)="open(i)" [attr.aria-label]="'Ver foto ' + (i + 1)">
+          <img [src]="photo.url" alt="Recuerdo" loading="lazy">
+          @if (photo.caption) {
+            <div class="thumb-caption">{{ photo.caption }}</div>
+          }
+        </button>
+      }
+    </div>
+  }
+
+</div>
+
+@if (lightboxPhoto()) {
+  <div
+    class="lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Ver foto"
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)"
+  >
+    <div class="lb-backdrop" (click)="close()" aria-hidden="true"></div>
+
+    <div class="lb-content">
+      <img [src]="lightboxPhoto()!.url" alt="Recuerdo" class="lb-img">
+
+      <!-- Nota del recuerdo -->
+      <div class="lb-note">
+        <label class="note-label" for="caption-input">
+          <i class="bi bi-pencil" aria-hidden="true"></i>
+          Nota del recuerdo
+        </label>
+        <textarea
+          id="caption-input"
+          class="note-input"
+          [value]="editingCaption()"
+          (input)="editingCaption.set($any($event.target).value)"
+          placeholder="¿Qué pasó ese día? ✨"
+          rows="2"
+          maxlength="120"
+        ></textarea>
+        <div class="note-footer">
+          <span class="note-date">{{ formatDate(lightboxPhoto()!.createdAt) }}</span>
+          <button class="note-save" (click)="saveCaption()" [disabled]="saving()">
+            {{ saving() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button class="lb-close" (click)="close()" aria-label="Cerrar">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    @if (lightboxIndex()! > 0) {
+      <button class="lb-prev" (click)="prev()" aria-label="Anterior">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    }
+    @if (lightboxIndex()! < photos().length - 1) {
+      <button class="lb-next" (click)="next()" aria-label="Siguiente">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    }
+  </div>
+}
