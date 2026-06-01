@@ -58,21 +58,18 @@
 
 <!-- Delete confirm sheet -->
 @if (albumToDelete()) {
-  <div class="sheet-backdrop" role="dialog" aria-modal="true"
+  <div class="del-backdrop" role="dialog" aria-modal="true"
        aria-label="Confirmar eliminación" (click)="cancelDelete()">
-    <div class="sheet-panel" (click)="$event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <h2 class="sheet-title">¿Eliminar sala?</h2>
-      <p class="sheet-sub">{{ albumToDelete()!.title }}</p>
-      <p class="sheet-body">Se eliminará la sala y todas sus fotos. Esta acción no se puede deshacer.</p>
-      <div class="sheet-actions">
-        <button class="btn-back" type="button" (click)="cancelDelete()">
-          <i class="bi bi-arrow-left" aria-hidden="true"></i> Atrás
-        </button>
-        <button class="btn-delete" type="button" (click)="deleteAlbum()">
-          Eliminar
-        </button>
-      </div>
+    <div class="del-sheet" (click)="$event.stopPropagation()">
+      <div class="del-handle"></div>
+      <p class="del-name">{{ albumToDelete()!.title }}</p>
+      <p class="del-warn">Se eliminará la sala y todas sus fotos. Esta acción no se puede deshacer.</p>
+      <button class="del-btn-confirm" type="button" (click)="deleteAlbum()">
+        Eliminar sala
+      </button>
+      <button class="del-btn-back" type="button" (click)="cancelDelete()">
+        Atrás
+      </button>
     </div>
   </div>
 }
