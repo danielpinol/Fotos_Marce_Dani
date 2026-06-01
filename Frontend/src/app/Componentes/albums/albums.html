@@ -66,8 +66,12 @@
       <p class="sheet-sub">{{ albumToDelete()!.title }}</p>
       <p class="sheet-body">Se eliminará la sala y todas sus fotos. Esta acción no se puede deshacer.</p>
       <div class="sheet-actions">
-        <button class="btn-cancel" type="button" (click)="cancelDelete()">Cancelar</button>
-        <button class="btn-delete" type="button" (click)="deleteAlbum()">Eliminar</button>
+        <button class="btn-back" type="button" (click)="cancelDelete()">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i> Atrás
+        </button>
+        <button class="btn-delete" type="button" (click)="deleteAlbum()">
+          Eliminar
+        </button>
       </div>
     </div>
   </div>

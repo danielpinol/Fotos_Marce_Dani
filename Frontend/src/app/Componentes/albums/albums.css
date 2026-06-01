@@ -173,10 +173,27 @@
   transition: opacity 0.2s;
 }
 .btn-create:disabled { opacity: 0.3; cursor: not-allowed; }
-.btn-delete {
-  flex: 1; padding: 13px; background: transparent;
-  border: 1px solid rgba(196,123,141,0.5); color: var(--rose);
-  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-  border-radius: 8px; transition: background 0.2s;
+.btn-back {
+  flex: 1; padding: 13px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: border-color 0.2s, color 0.2s;
 }
-.btn-delete:hover { background: rgba(196,123,141,0.1); }
+.btn-back:hover { color: var(--ink); border-color: var(--ink-soft); }
+
+.btn-delete {
+  flex: 1; padding: 13px;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+.btn-delete:hover { opacity: 0.85; }
