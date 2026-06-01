@@ -1,61 +1,157 @@
-<div class="page">
+<div class="page fade-in">
 
-  <!-- Header -->
-  <div class="header">
-    <h1 class="title">Subir foto</h1>
-    <div class="divider"></div>
+  <div class="ov-bar" style="border:none;padding-left:22px;padding-right:22px">
+    <div class="ov-title">
+      <div class="label">Nueva pieza</div>
+      <div class="sec-title">Guardar recuerdo</div>
+    </div>
   </div>
 
   @if (done()) {
-    <div class="success">
-      <i class="bi bi-check-circle success-icon" aria-hidden="true"></i>
-      <p>¡Foto subida!</p>
+    <div class="done-state">
+      <div class="done-icon">🫶</div>
+      <div class="done-title">¡Guardado en el archivo!</div>
+      <p class="done-sub">Se sincroniza al instante con el otro</p>
     </div>
   } @else if (albums().length === 0) {
-    <div class="empty">
-      <i class="bi bi-book empty-icon" aria-hidden="true"></i>
-      <p class="empty-text">Primero crea un capítulo en Albums</p>
-      <a href="/albums" class="go-albums">Ir a Capítulos</a>
+    <div class="empty-state">
+      <div class="eg">Primero crea un álbum</div>
+      <p>Ve a Álbumes para crear tu primera sala</p>
     </div>
   } @else {
 
     <!-- Foto -->
     <div class="section">
-      <p class="section-label">Foto</p>
-      <label class="photo-pick" for="photo-input" [class.has-preview]="previewUrl() !== null">
+      <label class="photo-pick" for="photo-input"
+             [class.has-preview]="previewUrl() !== null"
+             aria-label="Seleccionar foto">
         @if (previewUrl()) {
-          <img [src]="previewUrl()" alt="Vista previa" class="preview-img">
+          <img [src]="previewUrl()!" alt="Vista previa" class="preview-img">
           <div class="preview-overlay" aria-hidden="true">
-            <i class="bi bi-arrow-repeat"></i>
+            <span style="font-size:22px">↻</span>
             <span>Cambiar</span>
           </div>
         } @else {
-          <i class="bi bi-camera pick-icon" aria-hidden="true"></i>
-          <span class="pick-label">Tomar foto o elegir de galería</span>
+          <div class="pick-inner">
+            <i class="bi bi-camera pick-icon" aria-hidden="true"></i>
+            <span class="pick-label">Toca para subir su foto</span>
+            <span class="pick-sub">una foto por salida</span>
+          </div>
         }
       </label>
-      <input
-        id="photo-input"
-        type="file"
-        accept="image/*"
-        class="file-input"
-        aria-label="Seleccionar foto"
-        (change)="onFileChange($event)"
-      >
+      <input id="photo-input" type="file" accept="image/*"
+             class="file-input" aria-label="Seleccionar foto"
+             (change)="onFileChange($event)">
     </div>
 
-    <!-- Capítulo -->
+    <!-- Título -->
     <div class="section">
-      <p class="section-label">¿En qué capítulo?</p>
+      <div class="field">
+        <label class="field-label" for="photo-title">Título</label>
+        <input id="photo-title" class="field-input" type="text"
+               [value]="photoTitle()"
+               (input)="photoTitle.set($any($event.target).value)"
+               placeholder="Cita en café X, Noche de pelis…"
+               maxlength="60" autocomplete="off">
+      </div>
+      <div class="field">
+        <label class="field-label" for="photo-caption">Caption</label>
+        <textarea id="photo-caption" class="field-input" rows="2"
+                  [value]="photoCaption()"
+                  (input)="photoCaption.set($any($event.target).value)"
+                  placeholder="Una nota para acordarse…"
+                  maxlength="200"></textarea>
+      </div>
+    </div>
+
+    <!-- Mood -->
+    <div class="section">
+      <div class="section-label">Mood</div>
+      <div class="chips">
+        @for (m of moods; track m.id) {
+          <button type="button" class="chip-opt"
+                  [class.on]="photoMood() === m.id"
+                  (click)="selectMood(m.id)">
+            <span class="mood-dot" [style.background]="m.color"></span>
+            {{ m.emoji }} {{ m.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Rating -->
+    <div class="section">
+      <div class="section-label">Rating del momento</div>
+      <div class="rate">
+        @for (s of starsArray; track s) {
+          <button type="button" class="star-btn"
+                  [class.on]="s <= photoRating()"
+                  (click)="setRating(s)"
+                  [attr.aria-label]="s + ' estrellas'">★</button>
+        }
+      </div>
+    </div>
+
+    <!-- Fecha -->
+    <div class="section">
+      <div class="field">
+        <label class="field-label" for="photo-date">Fecha</label>
+        <input id="photo-date" class="field-input" type="date"
+               [value]="photoDate()"
+               (input)="photoDate.set($any($event.target).value)">
+      </div>
+    </div>
+
+    <!-- Lugar + Geolocalización -->
+    <div class="section">
+      <div class="field">
+        <label class="field-label" for="photo-place">Lugar</label>
+        <div class="place-row">
+          <input id="photo-place" class="field-input" type="text"
+                 [value]="photoPlace()"
+                 (input)="photoPlace.set($any($event.target).value)"
+                 placeholder="Café Barista, Antigua…"
+                 maxlength="60" autocomplete="off">
+          <button type="button" class="geo-btn"
+                  [class.locating]="locating()"
+                  (click)="useMyLocation()"
+                  [disabled]="locating()"
+                  aria-label="Usar mi ubicación actual">
+            {{ locating() ? '…' : '📍' }}
+          </button>
+        </div>
+        @if (photoLat()) {
+          <div class="geo-ok">
+            ✓ Coordenadas guardadas · {{ photoPlace() }}
+          </div>
+        }
+        @if (locError()) {
+          <div class="geo-err">{{ locError() }}</div>
+        }
+      </div>
+    </div>
+
+    <!-- Con quién -->
+    <div class="section">
+      <div class="section-label">Con quién</div>
+      <div class="chips">
+        @for (w of ['Solos los dos','Con la familia','Con amigos']; track w) {
+          <button type="button" class="chip-opt"
+                  [class.on]="photoWithWho() === w"
+                  (click)="selectWithWho(w)">{{ w }}</button>
+        }
+      </div>
+    </div>
+
+    <!-- Álbum -->
+    <div class="section">
+      <div class="section-label">¿En qué sala?</div>
       <div class="album-list">
         @for (album of albums(); track album.id) {
-          <button
-            class="album-btn"
-            type="button"
-            [class.album-btn--selected]="selectedAlbumId() === album.id"
-            (click)="selectAlbum(album.id)"
-            [attr.aria-pressed]="selectedAlbumId() === album.id"
-          >
+          <button type="button" class="album-btn"
+                  [class.album-btn--selected]="selectedAlbumId() === album.id"
+                  (click)="selectAlbum(album.id)"
+                  [attr.aria-pressed]="selectedAlbumId() === album.id">
             <span class="album-name">{{ album.title }}</span>
             <span class="album-count">{{ album.photoCount }} fotos</span>
           </button>
@@ -63,20 +159,55 @@
       </div>
     </div>
 
+    <!-- Etiquetas -->
+    <div class="section">
+      <div class="field">
+        <label class="field-label" for="photo-tags">Etiquetas</label>
+        <input id="photo-tags" class="field-input" type="text"
+               [value]="photoTagsStr()"
+               (input)="photoTagsStr.set($any($event.target).value)"
+               placeholder="café, aniversario, nuestro lugar"
+               maxlength="100" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Subida por -->
+    <div class="section">
+      <div class="section-label">Subida por</div>
+      <div class="chips">
+        <button type="button" class="chip-opt author-chip"
+                [class.on]="photoAuthor() === 'dani'"
+                (click)="selectAuthor('dani')">
+          <span class="author-dot" style="background:#3F6F9F">D</span>
+          Dani
+        </button>
+        <button type="button" class="chip-opt author-chip"
+                [class.on]="photoAuthor() === 'marce'"
+                (click)="selectAuthor('marce')">
+          <span class="author-dot" style="background:#B0564C">M</span>
+          Marche
+        </button>
+      </div>
+    </div>
+
     <!-- Submit -->
-    <button
-      class="submit-btn"
-      type="button"
-      [disabled]="!canUpload()"
-      (click)="doUpload()"
-    >
-      @if (uploading()) {
-        <i class="bi bi-hourglass-split" aria-hidden="true"></i> Subiendo…
-      } @else {
-        <i class="bi bi-cloud-upload" aria-hidden="true"></i> Subir foto
-      }
-    </button>
+    <div class="section">
+      <button type="button" class="btn-primary"
+              [disabled]="!canUpload()"
+              (click)="doUpload()">
+        @if (uploading()) {
+          Guardando en el archivo…
+        } @else {
+          Guardar en el archivo ✦
+        }
+      </button>
+      <div class="presence" style="justify-content:center;margin-top:14px">
+        <span class="ring"></span>
+        Se sincroniza al instante con el otro
+      </div>
+    </div>
 
   }
 
+  <div style="height:16px"></div>
 </div>

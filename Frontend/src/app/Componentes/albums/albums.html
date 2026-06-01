@@ -1,79 +1,70 @@
-<div class="pb-24">
+<div class="page fade-in">
 
-  <div class="px-6 pt-6 pb-2">
-    <div class="flex items-end justify-between mb-3">
-      <h1 class="[font-family:'Cormorant_Garamond',Georgia,serif] text-[44px] font-light italic text-[#f5ede8] leading-none tracking-[0.02em]">
-        Capítulos
-      </h1>
-      <p class="[font-family:'Cormorant_Garamond',Georgia,serif] text-[13px] italic text-[rgba(201,169,110,0.5)] pb-1.5">
-        {{ albums().length }} capítulos
-      </p>
+  <div class="sec-head" style="padding-top:24px">
+    <div>
+      <div class="label">El recorrido</div>
+      <div class="sec-title">Salas / Álbumes</div>
     </div>
-    <div class="h-px bg-gradient-to-r from-[rgba(201,169,110,0.4)] via-[rgba(196,123,141,0.2)] to-transparent"></div>
+    <span class="label">{{ albums().length }} {{ albums().length === 1 ? 'sala' : 'salas' }}</span>
   </div>
 
-  <div class="px-6 mt-4">
+  @if (albums().length === 0) {
+    <div class="empty-state">
+      <div class="eg">Aún no hay salas</div>
+      <p>Crea tu primer álbum para agrupar recuerdos</p>
+    </div>
+  }
 
-    @if (albums().length === 0) {
-      <div class="empty-state">
-        <div class="empty-rule"></div>
-        <i class="bi bi-book empty-icon" aria-hidden="true"></i>
-        <p class="empty-heading">Aún no hay capítulos</p>
-        <p class="empty-body">Crea tu primer capítulo y empieza a agrupar sus recuerdos juntos</p>
+  <div class="albgrid">
+    @for (album of albums(); track album.id; let i = $index) {
+      <div class="alb-card" role="button" tabindex="0"
+           [attr.aria-label]="'Abrir ' + album.title"
+           (click)="openAlbum(album.id)"
+           (keydown.enter)="openAlbum(album.id)">
+        <div class="alb-stack">
+          @if (album.covers[1]) {
+            <div class="alb-l alb-l2">
+              <img [src]="album.covers[1]" [alt]="album.title" loading="lazy">
+            </div>
+          }
+          <div class="alb-l alb-l1">
+            @if (album.covers[0]) {
+              <img [src]="album.covers[0]" [alt]="album.title" loading="lazy">
+            } @else {
+              <div class="alb-ph" [style.background]="gradientForIndex(i)"></div>
+            }
+          </div>
+          <button class="alb-delete" type="button"
+                  (click)="confirmDelete(album, $event)"
+                  [attr.aria-label]="'Eliminar ' + album.title">
+            <i class="bi bi-trash3" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="alb-nm">{{ album.title }}</div>
+        <div class="alb-ct">{{ album.photoCount }} {{ album.photoCount === 1 ? 'pieza' : 'piezas' }}@if (album.description) { · {{ album.description }} }</div>
       </div>
     }
-
-    @for (album of albums(); track album.id; let idx = $index) {
-      <button
-        class="chapter-card"
-        type="button"
-        (click)="openAlbum(album.id)"
-        [attr.aria-label]="'Abrir capítulo ' + roman(idx + 1) + ': ' + album.title"
-      >
-        <div class="chapter-accent"></div>
-        <div class="chapter-body">
-          <div class="chapter-top">
-            <span class="chapter-num">Capítulo {{ roman(idx + 1) }}</span>
-            <button
-              type="button"
-              class="chapter-delete"
-              (click)="confirmDelete(album, $event)"
-              [attr.aria-label]="'Eliminar ' + album.title"
-            >
-              <i class="bi bi-trash3" aria-hidden="true"></i>
-            </button>
-          </div>
-          <h2 class="chapter-title">{{ album.title }}</h2>
-          @if (album.description) {
-            <p class="chapter-desc">{{ album.description }}</p>
-          }
-          <div class="chapter-footer">
-            <span class="chapter-date">{{ album.createdAt | date:'MMM yyyy' }}</span>
-            <span class="chapter-count">{{ album.photoCount }} fotos</span>
-            <i class="bi bi-chevron-right chapter-arrow" aria-hidden="true"></i>
-          </div>
-        </div>
-      </button>
-    }
-
-    <button class="new-chapter-btn" type="button" (click)="openForm()" aria-label="Crear nuevo capítulo">
-      <i class="bi bi-plus" aria-hidden="true"></i>
-      <span>Nuevo capítulo</span>
-    </button>
-
   </div>
+
+  <div class="new-album-wrap">
+    <button class="new-album-btn" type="button" (click)="openForm()" aria-label="Crear nuevo álbum">
+      <span class="plus-icon">+</span>
+      <span>Nueva sala</span>
+    </button>
+  </div>
+
+  <div style="height:16px"></div>
 </div>
 
+<!-- Delete confirm sheet -->
 @if (albumToDelete()) {
   <div class="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Confirmar eliminación">
-    <div class="absolute inset-0" (click)="cancelDelete()" aria-hidden="true"></div>
+    <div class="sheet-bg" (click)="cancelDelete()" aria-hidden="true"></div>
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
-      <h2 class="sheet-title">¿Eliminar capítulo?</h2>
-      <p class="sheet-subtitle">{{ albumToDelete()!.title }}</p>
-      <p class="text-[13px] text-[rgba(245,237,232,0.4)] leading-relaxed mb-2">
-        Se eliminará el capítulo y todas sus fotos. Esta acción no se puede deshacer.
-      </p>
+      <h2 class="sheet-title">¿Eliminar sala?</h2>
+      <p class="sheet-sub">{{ albumToDelete()!.title }}</p>
+      <p class="sheet-body">Se eliminará la sala y todas sus fotos. Esta acción no se puede deshacer.</p>
       <div class="sheet-actions">
         <button class="btn-cancel" type="button" (click)="cancelDelete()">Cancelar</button>
         <button class="btn-delete" type="button" (click)="deleteAlbum()">Eliminar</button>
@@ -82,44 +73,35 @@
   </div>
 }
 
+<!-- Create form sheet -->
 @if (showForm()) {
-  <div class="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Crear nuevo capítulo">
-    <div class="absolute inset-0" (click)="closeForm()" aria-hidden="true"></div>
+  <div class="sheet-backdrop" role="dialog" aria-modal="true" aria-label="Nueva sala">
+    <div class="sheet-bg" (click)="closeForm()" aria-hidden="true"></div>
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
-      <h2 class="sheet-title">Nuevo capítulo</h2>
-      <p class="sheet-subtitle">Capítulo {{ roman(albums().length + 1) }}</p>
+      <h2 class="sheet-title">Nueva sala</h2>
       <div class="field">
         <label class="field-label" for="album-title">Nombre</label>
-        <input
-          id="album-title"
-          class="field-input"
-          type="text"
-          [ngModel]="newTitle()"
-          (ngModelChange)="newTitle.set($event)"
-          placeholder="Ej. Citas, Viajes, Universidad…"
-          maxlength="40"
-          autocomplete="off"
-        >
+        <input id="album-title" class="field-input" type="text"
+               [value]="newTitle()"
+               (input)="newTitle.set($any($event.target).value)"
+               placeholder="Ej. Citas, Viajes, Universidad…"
+               maxlength="40" autocomplete="off">
       </div>
       <div class="field">
         <label class="field-label" for="album-desc">
-          Descripción <span style="text-transform:none;letter-spacing:0;color:rgba(245,237,232,0.22);font-size:9px">(opcional)</span>
+          Descripción <span class="optional">(opcional)</span>
         </label>
-        <input
-          id="album-desc"
-          class="field-input"
-          type="text"
-          [ngModel]="newDescription()"
-          (ngModelChange)="newDescription.set($event)"
-          placeholder="Una frase que lo describa…"
-          maxlength="80"
-          autocomplete="off"
-        >
+        <input id="album-desc" class="field-input" type="text"
+               [value]="newDescription()"
+               (input)="newDescription.set($any($event.target).value)"
+               placeholder="Una frase que lo describa…"
+               maxlength="80" autocomplete="off">
       </div>
       <div class="sheet-actions">
         <button class="btn-cancel" type="button" (click)="closeForm()">Cancelar</button>
-        <button class="btn-create" type="button" (click)="createAlbum()" [disabled]="!newTitle().trim()">Crear</button>
+        <button class="btn-create" type="button" (click)="createAlbum()"
+                [disabled]="!newTitle().trim()">Crear sala</button>
       </div>
     </div>
   </div>

@@ -1,64 +1,116 @@
+:host { display: block; }
+
 .page { padding-bottom: 24px; }
 
-.header { padding: 24px 24px 0; margin-bottom: 20px; }
-.title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 40px; font-weight: 300; font-style: italic;
-  color: #f5ede8; margin: 0 0 12px; letter-spacing: 0.02em;
+.timeline { padding-bottom: 8px; }
+
+.tl-group { margin-bottom: 4px; }
+
+/* Month header */
+.tl-month {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 20px 22px 10px;
 }
-.divider {
-  height: 1px;
-  background: linear-gradient(to right, rgba(201,169,110,0.4), rgba(196,123,141,0.2), transparent);
+.tl-month .m {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  color: var(--gold);
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+.tl-month .y { font-size: 14px; color: var(--ink-faint); }
+.tl-month .c {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-left: auto;
+  letter-spacing: 0.12em;
 }
 
-.empty {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 10px; padding: 64px 24px; text-align: center;
-}
-.empty-icon { font-size: 40px; color: rgba(245,237,232,0.08); }
-.empty-text {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 20px; font-weight: 300; color: rgba(245,237,232,0.3); margin: 0;
-}
-.empty-sub { font-size: 12px; color: rgba(245,237,232,0.18); margin: 0; }
-
-/* ── Month group ── */
-.month-group { margin-bottom: 32px; }
-
-.month-header {
-  display: flex; align-items: baseline; justify-content: space-between;
-  padding: 0 24px 10px;
-  border-bottom: 1px solid rgba(245,237,232,0.06);
-  margin-bottom: 12px;
-}
-.month-label {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 20px; font-weight: 300; font-style: italic;
-  color: #c9a96e; letter-spacing: 0.04em;
-}
-.month-count {
-  font-size: 10px; letter-spacing: 0.14em; color: rgba(245,237,232,0.25);
+/* Timeline item */
+.tl-item {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
 }
 
-/* ── Photo rows ── */
-.month-photos { display: flex; flex-direction: column; gap: 2px; }
-
-.photo-row {
-  display: flex; align-items: center; gap: 14px;
-  padding: 6px 24px;
+/* Rail */
+.tl-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 54px;
+  flex-shrink: 0;
+  padding: 0;
+}
+.tl-node {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 18px;
+  box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.18);
+}
+.tl-line {
+  flex: 1;
+  width: 1px;
+  background: var(--line);
+  min-height: 20px;
 }
 
-.photo-thumb {
-  width: 72px; height: 72px; flex-shrink: 0; overflow: hidden;
+/* Card */
+.tl-card {
+  flex: 1;
+  padding: 0 22px 20px 0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  min-width: 0;
+  outline: none;
 }
-.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.tl-card:focus-visible { opacity: 0.8; }
+.tl-card:active { opacity: 0.75; }
 
-.photo-info {
-  display: flex; flex-direction: column; gap: 5px; min-width: 0;
+.tc-frame {
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--card-2);
+  margin-bottom: 10px;
+  position: relative;
 }
-.photo-album {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 16px; font-weight: 300; color: #f5ede8;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.tc-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
 }
-.photo-date { font-size: 10px; letter-spacing: 0.14em; color: rgba(245,237,232,0.3); }
+.tl-card:hover .tc-frame img { transform: scale(1.03); }
+
+.tc-ttl {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tc-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+.tc-meta {
+  font-size: 11px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  flex-shrink: 0;
+}

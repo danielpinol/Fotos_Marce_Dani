@@ -1,14 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { PhotoService, Album } from '../../services/photo.service';
-
-const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
 
 @Component({
   selector: 'app-albums',
-  imports: [RouterLink, FormsModule, DatePipe],
+  imports: [],
   templateUrl: './albums.html',
   styleUrl: './albums.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,17 +13,15 @@ export class Albums {
   private readonly photoService = inject(PhotoService);
   private readonly router = inject(Router);
 
-  readonly albums = signal<Album[]>([]);
-  readonly showForm = signal(false);
-  readonly newTitle = signal('');
+  readonly albums         = signal<Album[]>([]);
+  readonly showForm       = signal(false);
+  readonly newTitle       = signal('');
   readonly newDescription = signal('');
-  readonly albumToDelete = signal<Album | null>(null);
+  readonly albumToDelete  = signal<Album | null>(null);
 
   constructor() {
     this.photoService.getAlbums().subscribe(albums => this.albums.set(albums));
   }
-
-  roman(n: number): string { return ROMAN[n - 1] ?? String(n); }
 
   openAlbum(id: string): void { this.router.navigate(['/albums', id]); }
 
@@ -36,14 +30,12 @@ export class Albums {
     this.newDescription.set('');
     this.showForm.set(true);
   }
-
   closeForm(): void { this.showForm.set(false); }
 
   confirmDelete(album: Album, e: Event): void {
     e.stopPropagation();
     this.albumToDelete.set(album);
   }
-
   cancelDelete(): void { this.albumToDelete.set(null); }
 
   deleteAlbum(): void {
@@ -62,5 +54,11 @@ export class Albums {
       this.albums.update(list => [...list, album]);
       this.showForm.set(false);
     });
+  }
+
+  gradientForIndex(i: number): string {
+    const hues = [340, 25, 200, 280, 160, 50, 320, 100];
+    const h = hues[i % hues.length];
+    return `linear-gradient(150deg, hsl(${h},30%,42%) 0%, hsl(${h + 30},25%,28%) 100%)`;
   }
 }

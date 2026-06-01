@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { PhotoService, Photo, Album } from '../../services/photo.service';
+import { MOODS } from '../homepage/homepage';
 
 @Component({
   selector: 'app-gallery',
@@ -11,8 +12,8 @@ import { PhotoService, Photo, Album } from '../../services/photo.service';
 export class Gallery {
   private readonly photoService = inject(PhotoService);
 
-  readonly photos = signal<Photo[]>([]);
-  readonly albums = signal<Album[]>([]);
+  readonly photos        = signal<Photo[]>([]);
+  readonly albums        = signal<Album[]>([]);
   readonly filterAlbumId = signal<string | null>(null);
   readonly lightboxIndex = signal<number | null>(null);
   private touchStartX = 0;
@@ -36,18 +37,16 @@ export class Gallery {
     return this.albums().find(a => a.id === albumId)?.title ?? '';
   }
 
+  moodOf(id: string) { return MOODS[id] ?? MOODS['enamorados']; }
+
   setFilter(id: string | null): void { this.filterAlbumId.set(id); }
   open(index: number): void { this.lightboxIndex.set(index); }
   close(): void { this.lightboxIndex.set(null); }
-
-  prev(): void {
-    this.lightboxIndex.update(i => (i !== null && i > 0 ? i - 1 : i));
-  }
+  prev(): void { this.lightboxIndex.update(i => (i !== null && i > 0 ? i - 1 : i)); }
   next(): void {
     const max = this.filtered().length - 1;
     this.lightboxIndex.update(i => (i !== null && i < max ? i + 1 : i));
   }
-
   onTouchStart(e: TouchEvent): void { this.touchStartX = e.touches[0].clientX; }
   onTouchEnd(e: TouchEvent): void {
     const delta = this.touchStartX - e.changedTouches[0].clientX;

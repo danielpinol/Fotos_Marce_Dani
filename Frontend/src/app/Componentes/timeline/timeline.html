@@ -1,39 +1,59 @@
-<div class="page">
+<div class="page fade-in">
 
-  <div class="header">
-    <h1 class="title">Historia</h1>
-    <div class="divider"></div>
+  <div class="sec-head" style="padding-top:24px">
+    <div>
+      <div class="label">La historia, en orden</div>
+      <div class="sec-title">Nuestra línea</div>
+    </div>
   </div>
 
   @if (photos().length === 0) {
-    <div class="empty">
-      <i class="bi bi-clock-history empty-icon" aria-hidden="true"></i>
-      <p class="empty-text">Aún no hay recuerdos</p>
-      <p class="empty-sub">Sube fotos para empezar tu historia</p>
+    <div class="empty-state">
+      <div class="eg">Aún no hay recuerdos</div>
+      <p>Sube fotos para empezar tu historia</p>
     </div>
   } @else {
-    @for (group of groups(); track group.label) {
-      <div class="month-group">
-        <div class="month-header">
-          <span class="month-label">{{ group.label }}</span>
-          <span class="month-count">{{ group.photos.length }}</span>
-        </div>
+    <div class="timeline">
+      @for (group of groups(); track group.monthLabel; let gi = $index) {
+        <div class="tl-group">
+          <div class="tl-month">
+            <span class="m">{{ group.month }}</span>
+            <span class="y">{{ group.year }}</span>
+            <span class="c label">{{ group.photos.length }} {{ group.photos.length === 1 ? 'recuerdo' : 'recuerdos' }}</span>
+          </div>
 
-        <div class="month-photos">
-          @for (photo of group.photos; track photo.id) {
-            <div class="photo-row">
-              <div class="photo-thumb">
-                <img [src]="photo.url" alt="Recuerdo" loading="lazy">
+          @for (photo of group.photos; track photo.id; let pi = $index) {
+            <div class="tl-item">
+              <div class="tl-rail">
+                <div class="tl-node"></div>
+                @if (!isLast(groups(), gi, group.photos, pi)) {
+                  <div class="tl-line"></div>
+                }
               </div>
-              <div class="photo-info">
-                <span class="photo-album">{{ albumName(photo.albumId) }}</span>
-                <span class="photo-date">{{ formatDate(photo.createdAt) }}</span>
+              <div class="tl-card" role="button" tabindex="0"
+                   [attr.aria-label]="photoLabel(photo)">
+                <div class="tc-frame">
+                  <img [src]="photo.url" [alt]="photoLabel(photo)" loading="lazy">
+                </div>
+                <div class="tc-ttl">{{ photoLabel(photo) }}</div>
+                <div class="tc-row">
+                  <span class="tc-meta">{{ formatDate(photo.createdAt) }}</span>
+                  <span class="tc-meta">·</span>
+                  <span class="mood-chip">
+                    <span class="mc-dot" [style.background]="moodOf(photo.mood).color"></span>
+                    {{ moodOf(photo.mood).emoji }} {{ moodOf(photo.mood).label }}
+                  </span>
+                  @if (albumName(photo.albumId)) {
+                    <span class="tc-meta">· {{ albumName(photo.albumId) }}</span>
+                  }
+                </div>
               </div>
             </div>
           }
         </div>
-      </div>
-    }
+      }
+    </div>
   }
 
+  <div style="height:16px"></div>
 </div>

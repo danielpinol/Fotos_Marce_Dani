@@ -1,6 +1,12 @@
 <div class="app-shell">
-  <main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+  <main>
     <router-outlet />
   </main>
   <app-bottom-nav />
+  <div class="theme-toggle">
+    <button class="theme-btn" (click)="toggleTheme()"
+            [attr.aria-label]="theme() === 'light' ? 'Cambiar a modo noche' : 'Cambiar a modo galería'">
+      {{ theme() === 'light' ? '🌙' : '☀️' }}
+    </button>
+  </div>
 </div>

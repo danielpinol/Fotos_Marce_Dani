@@ -1,0 +1,190 @@
+<div class="page fade-in">
+
+  <!-- Hero: "El Archivo de Nosotros" -->
+  <section class="nos-hero">
+    <p class="app-label">El Archivo de Nosotros</p>
+    <h1 class="couple">Marche <span class="amp">&amp;</span> Dani</h1>
+    <p class="since">Juntos desde el 10 de febrero, 2026</p>
+    <div class="counter-row">
+      <div class="big-num">{{ days() }}</div>
+      <div class="counter-details">
+        <span class="counter-label">días</span>
+        <div class="timepill"><b>{{ hh() }}</b>:<b>{{ mm() }}</b>:<b>{{ ss() }}</b></div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="prog-track">
+        <div class="prog-fill" [style.width]="yearProgress() + '%'"></div>
+      </div>
+      <div class="prog-labels">
+        <span>Feb 2026</span>
+        <span class="pct">{{ yearProgress() }}% del primer año</span>
+        <span>Feb 2027</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick links -->
+  <div class="quick-nav">
+    <a routerLink="/gallery" class="qnav-card">
+      <span class="qnav-icon">🖼</span>
+      <span>Galería</span>
+    </a>
+    <a routerLink="/timeline" class="qnav-card">
+      <span class="qnav-icon">⏱</span>
+      <span>Historia</span>
+    </a>
+    <a routerLink="/albums" class="qnav-card">
+      <span class="qnav-icon">📚</span>
+      <span>Álbumes</span>
+    </a>
+    <a routerLink="/upload" class="qnav-card qnav-card--accent">
+      <span class="qnav-icon">+</span>
+      <span>Agregar</span>
+    </a>
+  </div>
+
+  <!-- Recap cover (most loved photo) -->
+  @if (stats().mostLoved) {
+    <div class="sec-head">
+      <div>
+        <div class="label">Resumen</div>
+        <div class="sec-title">Recap del mes</div>
+      </div>
+    </div>
+    <div class="recap-cover">
+      <img [src]="stats().mostLoved!.url" alt="Pieza más querida" class="recap-img" loading="lazy">
+      <div class="recap-ov">
+        <div class="label" style="color:rgba(255,255,255,0.75);margin-bottom:8px">{{ currentMonthName() }} · en repaso</div>
+        <div class="recap-big">El mes que <em>{{ stats().topMood.label.toLowerCase() }}</em></div>
+        <a routerLink="/timeline" class="recap-link">
+          Ver historia <i class="bi bi-chevron-right"></i>
+        </a>
+      </div>
+    </div>
+  }
+
+  <!-- Estadísticas lindas -->
+  <div class="sec-head">
+    <div>
+      <div class="label">Sin frialdad</div>
+      <div class="sec-title">Estadísticas lindas</div>
+    </div>
+  </div>
+
+  <div class="statgrid">
+    <div class="statcard">
+      <div class="sv">{{ stats().total }}</div>
+      <div class="sl">recuerdos guardados</div>
+    </div>
+    <div class="statcard">
+      <div class="sv">{{ weeks() }}</div>
+      <div class="sl">semanas juntos</div>
+    </div>
+    <div class="statcard">
+      <div class="sv">{{ months() }}</div>
+      <div class="sl">meses juntos</div>
+    </div>
+    <div class="statcard">
+      <div class="sv gold">{{ stats().avgRating.toFixed(1) }}</div>
+      <div class="sl">rating promedio</div>
+    </div>
+
+    @if (stats().topPlace[0] !== '—') {
+      <div class="statcard wide">
+        <div>
+          <div class="label" style="margin-bottom:6px">Lugar más repetido</div>
+          <div class="sv-place">{{ stats().topPlace[0] }}</div>
+        </div>
+        <div class="sv accent" style="font-size:32px">{{ stats().topPlace[1] }}×</div>
+      </div>
+    }
+
+    <div class="statcard">
+      <div style="font-size:32px;margin-bottom:4px">{{ stats().topMood.emoji }}</div>
+      <div class="sv" style="font-size:20px">{{ stats().topMood.label }}</div>
+      <div class="sl">mood dominante</div>
+    </div>
+  </div>
+
+  <!-- Mapa de recuerdos -->
+  <div class="sec-head">
+    <div>
+      <div class="label">Geografía nuestra</div>
+      <div class="sec-title">Mapa de recuerdos</div>
+    </div>
+  </div>
+
+  @if (mapPins().length === 0) {
+    <div class="empty-state" style="padding:32px 22px">
+      <div class="eg">Sin ubicaciones aún</div>
+      <p>Activa la ubicación al subir fotos para verlas en el mapa</p>
+    </div>
+  } @else {
+    <div class="real-map-wrap">
+      <app-memory-map
+        [pins]="mapPins()"
+        [center]="[14.64, -90.51]"
+        [zoom]="6"
+        (pinClicked)="onPinClicked($event)"
+        style="height:260px;display:block;border-radius:14px;overflow:hidden">
+      </app-memory-map>
+    </div>
+
+    @if (activePin()) {
+      <div class="pin-memories">
+        <div class="label" style="padding:12px 22px 10px">
+          {{ activePin() }} · {{ pinMemories().length }} {{ pinMemories().length === 1 ? 'recuerdo' : 'recuerdos' }}
+        </div>
+        @for (m of pinMemories(); track m.id) {
+          <a [routerLink]="['/albums', m.albumId]" class="pin-memory-row">
+            <div class="pin-mem-img">
+              <img [src]="m.url" [alt]="m.title || m.caption || 'Recuerdo'" loading="lazy">
+            </div>
+            <div class="pin-mem-info">
+              <div class="pin-mem-title">{{ m.title || m.caption || 'Recuerdo' }}</div>
+              <div class="pin-mem-sub">{{ albumName(m.albumId) }}</div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  }
+
+  <!-- Cápsulas del tiempo -->
+  <div class="sec-head">
+    <div>
+      <div class="label">Para después</div>
+      <div class="sec-title">Cápsulas del tiempo</div>
+    </div>
+  </div>
+
+  @if (capsules().length === 0) {
+    <div class="empty-state" style="padding:32px 22px">
+      <div class="eg">Sin cápsulas aún</div>
+      <p>Las cápsulas del tiempo aparecerán aquí cuando las creen</p>
+    </div>
+  }
+
+  @for (cap of capsules(); track cap.id) {
+    <div class="capsule" [class.locked]="!capsuleIsOpen(cap)">
+      <div class="cap-lock">{{ capsuleIsOpen(cap) ? '✦' : '🔒' }}</div>
+      <div class="cap-info">
+        <div class="cap-title">{{ cap.title }}</div>
+        <div class="cap-date">
+          @if (capsuleIsOpen(cap)) {
+            Lista para abrir 🤍
+          } @else {
+            Se abre el {{ formatDate(cap.unlock) }}
+          }
+        </div>
+        @if (!capsuleIsOpen(cap)) {
+          <div class="cap-countdown">faltan {{ daysUntilCapsule(cap) }} días</div>
+        }
+      </div>
+      <i class="bi bi-chevron-right cap-chevron" aria-hidden="true"></i>
+    </div>
+  }
+
+  <div style="height:20px"></div>
+</div>

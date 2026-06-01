@@ -2,32 +2,68 @@
   display: flex;
   height: 100dvh;
   justify-content: center;
-  overflow: hidden;
+  background: var(--bg);
 }
 
 .app-shell {
   position: relative;
   width: 100%;
   max-width: 480px;
-  height: 100%;
-  background-color: #0e0a0d;
-  background-image:
-    radial-gradient(ellipse 90% 55% at 50% 0%,  rgba(180, 90, 115, 0.22) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 50% at 10% 85%, rgba(195, 155, 80,  0.14) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 45% at 90% 60%, rgba(160, 70,  95,  0.10) 0%, transparent 55%);
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  height: 100dvh;
+  background: var(--bg);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
+  /* Sin overflow:hidden aquí — el scroll está en <main> */
+  transition: background .5s var(--ease), border-color .5s var(--ease);
 }
 
-.app-shell > main {
-  padding-bottom: calc(70px + env(safe-area-inset-bottom));
+/* Film grain — fijo sobre todo, no bloquea scroll */
+.app-shell::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-op, .035);
+  mix-blend-mode: overlay;
 }
+
+/* main = zona de scroll principal */
+.app-shell > main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+.app-shell > main::-webkit-scrollbar { width: 0; }
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: 12px;
+  z-index: 100;
+}
+.theme-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 14px;
+  display: grid; place-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform .2s var(--ease);
+}
+.theme-btn:active { transform: scale(.9); }
 
 @media (max-width: 520px) {
-  .app-shell {
-    border-left: 0;
-    border-right: 0;
-  }
+  .app-shell { border-left: 0; border-right: 0; }
 }

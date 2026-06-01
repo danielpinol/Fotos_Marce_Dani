@@ -1,95 +1,262 @@
-<div class="page">
+<div class="page fade-in">
 
   <div class="header">
-    <a routerLink="/albums" class="back-btn" aria-label="Volver a capítulos">
+    <a routerLink="/albums" class="back-btn" aria-label="Volver a álbumes">
       <i class="bi bi-chevron-left" aria-hidden="true"></i>
-      <span>Capítulos</span>
+      <span>Álbumes</span>
     </a>
 
     @if (album()) {
       <div class="album-hero">
-        <p class="chapter-label">{{ album()!.title }}</p>
+        <div class="label">Sala</div>
+        <h1 class="chapter-label">{{ album()!.title }}</h1>
         @if (album()!.description) {
           <p class="album-desc">{{ album()!.description }}</p>
         }
-        <p class="album-meta">{{ photos().length }} fotos</p>
+        <p class="album-meta">{{ photos().length }} {{ photos().length === 1 ? 'pieza' : 'piezas' }}</p>
       </div>
       <div class="divider"></div>
     }
   </div>
 
   @if (photos().length === 0) {
-    <div class="empty">
-      <i class="bi bi-camera empty-icon" aria-hidden="true"></i>
-      <p class="empty-text">Este capítulo está vacío</p>
-      <p class="empty-sub">Sube fotos desde el botón +</p>
+    <div class="empty-state">
+      <div class="eg">Sala vacía</div>
+      <p>Aún no hay recuerdos aquí.<br>Sube fotos desde el botón +</p>
     </div>
   } @else {
     <div class="grid" role="list">
       @for (photo of photos(); track photo.id; let i = $index) {
-        <button class="thumb" role="listitem" (click)="open(i)" [attr.aria-label]="'Ver foto ' + (i + 1)">
-          <img [src]="photo.url" alt="Recuerdo" loading="lazy">
-          @if (photo.caption) {
-            <div class="thumb-caption">{{ photo.caption }}</div>
+        <button class="thumb" role="listitem"
+                (click)="open(i)"
+                [attr.aria-label]="photoLabel(photo)">
+          <img [src]="photo.url" [alt]="photoLabel(photo)" loading="lazy">
+          @if (photo.title || photo.caption) {
+            <div class="thumb-caption">{{ photo.title || photo.caption }}</div>
           }
         </button>
       }
     </div>
   }
 
+  <div style="height:16px"></div>
 </div>
 
-@if (lightboxPhoto()) {
-  <div
-    class="lightbox"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Ver foto"
-    (touchstart)="onTouchStart($event)"
-    (touchend)="onTouchEnd($event)"
-  >
-    <div class="lb-backdrop" (click)="close()" aria-hidden="true"></div>
+<!-- Lightbox / Detail overlay -->
+@if (lightboxPhoto(); as photo) {
+  <div class="overlay"
+       role="dialog" aria-modal="true"
+       [attr.aria-label]="photoLabel(photo)"
+       (touchstart)="onTouchStart($event)"
+       (touchend)="onTouchEnd($event)">
 
-    <div class="lb-content">
-      <img [src]="lightboxPhoto()!.url" alt="Recuerdo" class="lb-img">
+    <div class="ov-bar">
+      <button class="iconbtn" (click)="close()" aria-label="Cerrar">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <span class="ov-title">{{ photoLabel(photo) }}</span>
+      @if (lightboxIndex()! > 0) {
+        <button class="iconbtn" (click)="prev()" aria-label="Anterior">
+          <i class="bi bi-chevron-left" style="font-size:12px"></i>
+        </button>
+      }
+      @if (lightboxIndex()! < photos().length - 1) {
+        <button class="iconbtn" (click)="next()" aria-label="Siguiente">
+          <i class="bi bi-chevron-right" style="font-size:12px"></i>
+        </button>
+      }
+    </div>
 
-      <!-- Nota del recuerdo -->
-      <div class="lb-note">
-        <label class="note-label" for="caption-input">
-          <i class="bi bi-pencil" aria-hidden="true"></i>
+    <div class="ov-scroll">
+      <!-- Hero image -->
+      <div class="detail-hero">
+        <img [src]="photo.url" [alt]="photoLabel(photo)" class="detail-img">
+      </div>
+
+      <!-- Title & caption -->
+      <div class="detail-head">
+        @if (photo.title) {
+          <h2 class="detail-title">{{ photo.title }}</h2>
+        }
+        @if (photo.caption) {
+          <p class="detail-caption">"{{ photo.caption }}"</p>
+        }
+      </div>
+
+      <!-- Metadata plaque -->
+      <div class="plaque">
+        <div class="prow">
+          <span class="pk">Fecha</span>
+          <span class="pv">{{ formatDate(photo.createdAt) }}</span>
+        </div>
+        @if (photo.place && photo.place.name) {
+          <div class="prow">
+            <span class="pk">Lugar</span>
+            <span class="pv">📍 {{ photo.place.name }}</span>
+          </div>
+        }
+        <div class="prow">
+          <span class="pk">Mood</span>
+          <span class="pv">
+            <span class="mood-chip">
+              <span class="mc-dot" [style.background]="moodOf(photo.mood).color"></span>
+              {{ moodOf(photo.mood).emoji }} {{ moodOf(photo.mood).label }}
+            </span>
+          </span>
+        </div>
+        <div class="prow">
+          <span class="pk">Con quién</span>
+          <span class="pv">{{ photo.withWho }}</span>
+        </div>
+        <div class="prow">
+          <span class="pk">Momento</span>
+          <span class="pv stars">
+            @for (s of starsArray; track s) {
+              <span [style.opacity]="s <= photo.rating ? '1' : '0.2'">★</span>
+            }
+          </span>
+        </div>
+        @if (photo.tags && photo.tags.length) {
+          <div class="prow">
+            <span class="pk">Tags</span>
+            <span class="pv">
+              <span class="tagrow">
+                @for (tag of photo.tags; track tag) {
+                  <span class="tag">#{{ tag }}</span>
+                }
+              </span>
+            </span>
+          </div>
+        }
+        <div class="prow">
+          <span class="pk">Subida por</span>
+          <span class="pv">
+            <span class="avatar"
+                  [style.background]="people[photo.author]?.color"
+                  [style.width]="'22px'"
+                  [style.height]="'22px'"
+                  [style.font-size]="'10px'"
+                  style="display:inline-grid;margin-right:6px">
+              {{ photo.author === 'dani' ? 'D' : 'M' }}
+            </span>
+            {{ people[photo.author]?.name }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Reactions -->
+      <div class="react-bar" role="group" aria-label="Reacciones">
+        @for (e of reactions; track e) {
+          <button type="button" class="react-btn"
+                  [class.picked]="hasMyReaction(e)"
+                  (click)="react(e)"
+                  [attr.aria-label]="'Reaccionar con ' + e">{{ e }}</button>
+        }
+      </div>
+      @if (photo.reactions.length > 0) {
+        <div class="react-pills">
+          @for (r of photo.reactions; track $index) {
+            <span class="react-pill">
+              <span class="avatar"
+                    [style.background]="people[r.by]?.color"
+                    [style.width]="'20px'"
+                    [style.height]="'20px'"
+                    [style.font-size]="'9px'"
+                    style="display:inline-grid">
+                {{ r.by === 'dani' ? 'D' : 'M' }}
+              </span>
+              {{ r.emoji }}
+            </span>
+          }
+        </div>
+      }
+
+      <!-- Comments -->
+      <div class="comments-section">
+        <div class="label" style="padding:12px 22px 14px">
+          {{ photo.comments.length }} {{ photo.comments.length === 1 ? 'nota' : 'notas' }}
+        </div>
+        @for (c of photo.comments; track $index) {
+          <div class="comment">
+            <span class="avatar"
+                  [style.background]="people[c.by]?.color"
+                  [style.width]="'34px'"
+                  [style.height]="'34px'"
+                  [style.font-size]="'13px'">
+              {{ c.by === 'dani' ? 'D' : 'M' }}
+            </span>
+            <div class="bubble">
+              <div class="who" [style.color]="people[c.by]?.color">{{ people[c.by]?.name }}</div>
+              <div class="tx">{{ c.text }}</div>
+              <div class="at">{{ formatShortDate(c.at) }}</div>
+            </div>
+          </div>
+        }
+        @if (photo.comments.length === 0) {
+          <p class="no-notes">Sé el primero en dejar una nota.</p>
+        }
+      </div>
+
+      <!-- Who am I selector -->
+      <div class="author-select">
+        <span class="label">Comentar como</span>
+        <div class="author-chips">
+          <button type="button" class="chip-opt-sm"
+                  [class.on]="activeAuthor() === 'dani'"
+                  (click)="activeAuthor.set('dani')">
+            <span class="avatar-sm" style="background:#3F6F9F">D</span> Dani
+          </button>
+          <button type="button" class="chip-opt-sm"
+                  [class.on]="activeAuthor() === 'marce'"
+                  (click)="activeAuthor.set('marce')">
+            <span class="avatar-sm" style="background:#B0564C">M</span> Marche
+          </button>
+        </div>
+      </div>
+
+      <!-- Comment composer -->
+      <div class="composer-row">
+        <span class="avatar"
+              [style.background]="people[activeAuthor()]?.color"
+              [style.width]="'34px'"
+              [style.height]="'34px'"
+              [style.font-size]="'13px'">
+          {{ activeAuthor() === 'dani' ? 'D' : 'M' }}
+        </span>
+        <input type="text"
+               [value]="commentText()"
+               (input)="commentText.set($any($event.target).value)"
+               (keydown.enter)="sendComment()"
+               [placeholder]="'Escribe como ' + (activeAuthor() === 'dani' ? 'Dani' : 'Marche') + '…'"
+               [disabled]="commenting()">
+        <button type="button" class="send-btn" (click)="sendComment()"
+                [disabled]="!commentText().trim() || commenting()"
+                aria-label="Enviar nota">
+          <i class="bi bi-send"></i>
+        </button>
+      </div>
+
+      <!-- Caption editor -->
+      <div class="note-editor">
+        <div class="label" style="margin-bottom:8px">
+          <i class="bi bi-pencil" style="margin-right:4px"></i>
           Nota del recuerdo
-        </label>
-        <textarea
-          id="caption-input"
-          class="note-input"
-          [value]="editingCaption()"
-          (input)="editingCaption.set($any($event.target).value)"
-          placeholder="¿Qué pasó ese día? ✨"
-          rows="2"
-          maxlength="120"
-        ></textarea>
+        </div>
+        <textarea class="note-input"
+                  [value]="editingCaption()"
+                  (input)="editingCaption.set($any($event.target).value)"
+                  placeholder="¿Qué pasó ese día? ✨"
+                  rows="2" maxlength="120"></textarea>
         <div class="note-footer">
-          <span class="note-date">{{ formatDate(lightboxPhoto()!.createdAt) }}</span>
-          <button class="note-save" (click)="saveCaption()" [disabled]="saving()">
+          <span class="at">{{ formatDate(photo.createdAt) }}</span>
+          <button type="button" class="note-save" (click)="saveCaption()"
+                  [disabled]="saving()">
             {{ saving() ? 'Guardando…' : 'Guardar' }}
           </button>
         </div>
       </div>
+
+      <div style="height:30px"></div>
     </div>
-
-    <button class="lb-close" (click)="close()" aria-label="Cerrar">
-      <i class="bi bi-x-lg"></i>
-    </button>
-
-    @if (lightboxIndex()! > 0) {
-      <button class="lb-prev" (click)="prev()" aria-label="Anterior">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-    }
-    @if (lightboxIndex()! < photos().length - 1) {
-      <button class="lb-next" (click)="next()" aria-label="Siguiente">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-    }
   </div>
 }

@@ -1,100 +1,126 @@
-<div class="page">
+<div class="page fade-in">
 
-  <div class="top-line" aria-hidden="true"></div>
+  <!-- Hero — idéntico a screens.jsx -->
+  <section class="hero" aria-label="Tiempo juntos">
+    <h1 class="couple">Marche <span class="amp">&amp;</span> Dani</h1>
+    <p class="since">Juntos desde el 10 de febrero, 2026</p>
 
-  <section class="hero" aria-label="Contador de tiempo juntos">
-    <h1 class="couple-name">Marche <span class="amp">&amp;</span> Dani</h1>
-    <p class="since-label">Juntos desde el 10 de febrero, 2026</p>
-
-    <div class="counter-block">
-      <span class="days-number">{{ days() }}</span>
-      <span class="days-label">días juntos</span>
+    <div class="counter" aria-live="polite">
+      <div class="num">{{ days() }}</div>
+      <span class="unit">días juntos</span>
     </div>
 
-    <div class="time-display" aria-live="polite" aria-label="Tiempo exacto juntos">
-      {{ timeString() }}
+    <div class="timepill" aria-label="Tiempo exacto">
+      <b>{{ hh() }}</b>:<b>{{ mm() }}</b>:<b>{{ ss() }}</b>
     </div>
 
-    <div class="progress-section">
-      <div
-        class="progress-track"
-        role="progressbar"
-        [attr.aria-valuenow]="yearProgress()"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        [attr.aria-label]="yearProgress() + '% del primer año juntos'"
-      >
-        <div class="progress-fill" [style.width]="yearProgress() + '%'"></div>
-      </div>
-      <div class="progress-labels">
+    <div class="progress" role="progressbar"
+         [attr.aria-valuenow]="yearProgress()" aria-valuemin="0" aria-valuemax="100">
+      <div class="track"><div class="fill" [style.width]="yearProgress() + '%'"></div></div>
+      <div class="prog-labels">
         <span>10 feb 2026</span>
-        <span class="progress-pct">{{ yearProgress() }}% para el primer año</span>
+        <span class="mid">{{ yearProgress() }}% al primer año</span>
         <span>10 feb 2027</span>
       </div>
     </div>
   </section>
 
-  <div class="soft-divider" aria-hidden="true"></div>
-
-  <div class="stats-row" role="list" aria-label="Estadísticas">
-    <div class="stat" role="listitem">
-      <span class="stat-val">{{ months() }}</span>
-      <span class="stat-label">Meses</span>
+  <!-- Prompt del día -->
+  <div class="sec-head">
+    <div>
+      <div class="label">Idea del día</div>
+      <div class="sec-title">¿Qué foto suben hoy?</div>
     </div>
-    <div class="stat-sep" aria-hidden="true"></div>
-    <div class="stat" role="listitem">
-      <span class="stat-val gold">{{ weeks() }}</span>
-      <span class="stat-label">Semanas</span>
-    </div>
-    <div class="stat-sep" aria-hidden="true"></div>
-    <div class="stat" role="listitem">
-      <span class="stat-val rose">{{ recentPhotos().length }}</span>
-      <span class="stat-label">Recuerdos</span>
-    </div>
+    <button class="more" (click)="nextPrompt()" type="button" aria-label="Otra idea">otra</button>
   </div>
+  <a routerLink="/upload" class="prompt-card" aria-label="Responder idea del día">
+    <div class="seal">✦</div>
+    <div class="ptxt">
+      <div class="pl label">Diaria</div>
+      <div class="pq">{{ prompt() }}</div>
+    </div>
+  </a>
 
-  <div class="section-line" aria-hidden="true"></div>
-  <p class="section-title">Últimos recuerdos</p>
-
-  <div
-    class="carousel"
-    role="region"
-    aria-label="Fotos recientes"
-    (touchstart)="onTouchStart($event)"
-    (touchend)="onTouchEnd($event)"
-  >
-    <div class="carousel-track" [style.transform]="'translateX(' + (-carouselIndex() * 100) + '%)'">
-
-      @for (photo of recentPhotos(); track photo.id) {
-        <div class="carousel-slide" role="group" [attr.aria-label]="'Foto ' + ($index + 1)">
-          <div class="photo-card photo-card--image">
-            <img [src]="photo.url" alt="Recuerdo" style="width:100%;height:100%;object-fit:cover;">
+  <!-- Featured exhibit — 4:5 como el prototipo -->
+  @if (featured(); as feat) {
+    <div class="sec-head">
+      <div>
+        <div class="label">Pieza destacada</div>
+        <div class="sec-title">Lo más reciente</div>
+      </div>
+    </div>
+    <a routerLink="/gallery" class="exhibit" [attr.aria-label]="photoLabel(feat)">
+      <div class="ex-frame">
+        <img [src]="feat.url" [alt]="photoLabel(feat)" loading="eager">
+      </div>
+      <div class="ex-meta">
+        <div>
+          <div class="ex-ttl">{{ photoLabel(feat) }}</div>
+          <div class="ex-sub">{{ featuredSub(feat) }}</div>
+        </div>
+        <div class="no">
+          <div class="label" style="text-align:right">Reciente</div>
+          <div class="ex-stars" style="margin-top:6px" aria-label="{{ feat.rating }} estrellas">
+            @for (s of starsArray; track s) {
+              <span [style.opacity]="s <= feat.rating ? '1' : '0.25'">★</span>
+            }
           </div>
         </div>
-      }
-
-      <div class="carousel-slide" role="group" aria-label="Agregar foto">
-        <a routerLink="/upload" class="upload-card" aria-label="Agregar foto">
-          <i class="bi bi-plus" aria-hidden="true"></i>
-          <span>Agregar</span>
-        </a>
       </div>
+    </a>
+  }
 
+  <!-- Recuerdos recientes — strip 142×178 como el prototipo -->
+  <div class="sec-head">
+    <div>
+      <div class="label">La colección</div>
+      <div class="sec-title">Recuerdos recientes</div>
     </div>
+    <a routerLink="/timeline" class="more">historia</a>
+  </div>
+  <div class="strip" role="list">
+    @for (photo of recent(); track photo.id) {
+      <a routerLink="/gallery" class="poster" role="listitem"
+         [attr.aria-label]="photoLabel(photo)">
+        <div class="p-frame">
+          <img [src]="photo.url" [alt]="photoLabel(photo)" loading="lazy">
+        </div>
+        <div class="p-t">{{ photoLabel(photo) }}</div>
+        <div class="p-d">{{ moodOf(photo.mood).emoji }} {{ moodOf(photo.mood).label }}</div>
+      </a>
+    }
+    <a routerLink="/upload" class="addposter" aria-label="Agregar recuerdo">
+      <span class="plus-icon" aria-hidden="true">+</span>
+      <span class="plus-label">Agregar</span>
+    </a>
   </div>
 
-  <div class="carousel-dots" role="tablist" aria-label="Navegación">
-    @for (dot of carouselDots(); track $index) {
-      <button
-        class="dot"
-        [class.dot-active]="carouselIndex() === $index"
-        (click)="goToSlide($index)"
-        role="tab"
-        [attr.aria-selected]="carouselIndex() === $index"
-        [attr.aria-label]="'Ir a foto ' + ($index + 1)"
-      ></button>
-    }
-  </div>
+  <!-- Álbumes — strip -->
+  @if (albums().length > 0) {
+    <div class="sec-head">
+      <div>
+        <div class="label">Salas</div>
+        <div class="sec-title">Álbumes</div>
+      </div>
+      <a routerLink="/albums" class="more">ver todos</a>
+    </div>
+    <div class="strip" role="list">
+      @for (album of albums().slice(0, 5); track album.id; let i = $index) {
+        <a [routerLink]="['/albums', album.id]" class="poster" role="listitem"
+           [attr.aria-label]="album.title">
+          <div class="p-frame">
+            @if (album.covers[0]) {
+              <img [src]="album.covers[0]" [alt]="album.title" loading="lazy">
+            } @else {
+              <div class="ph-grad" [style.background]="gradientForIndex(i)"></div>
+            }
+          </div>
+          <div class="p-t">{{ album.title }}</div>
+          <div class="p-d">{{ album.photoCount }} piezas</div>
+        </a>
+      }
+    </div>
+  }
 
   <div class="spacer"></div>
 </div>
