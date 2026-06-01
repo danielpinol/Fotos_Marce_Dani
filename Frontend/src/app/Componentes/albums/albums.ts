@@ -41,9 +41,14 @@ export class Albums {
   deleteAlbum(): void {
     const target = this.albumToDelete();
     if (!target) return;
-    this.photoService.deleteAlbum(target.id).subscribe(() => {
-      this.albums.update(list => list.filter(a => a.id !== target.id));
-      this.albumToDelete.set(null);
+    this.photoService.deleteAlbum(target.id).subscribe({
+      next: () => {
+        this.albums.update(list => list.filter(a => a.id !== target.id));
+        this.albumToDelete.set(null);
+      },
+      error: (err) => {
+        console.error('Error al eliminar álbum:', err);
+      },
     });
   }
 
