@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PhotoService, Album } from '../../services/photo.service';
 import { MOODS } from '../homepage/homepage';
 
@@ -12,7 +12,8 @@ import { MOODS } from '../homepage/homepage';
 })
 export class Upload {
   private readonly photoService = inject(PhotoService);
-  private readonly router = inject(Router);
+  private readonly router       = inject(Router);
+  private readonly route        = inject(ActivatedRoute);
 
   readonly albums          = signal<Album[]>([]);
   readonly selectedAlbumId = signal<string | null>(null);
@@ -44,9 +45,12 @@ export class Upload {
   );
 
   constructor() {
+    const albumIdParam = this.route.snapshot.queryParamMap.get('albumId');
     this.photoService.getAlbums().subscribe(albums => {
       this.albums.set(albums);
-      if (albums.length > 0 && !this.selectedAlbumId()) {
+      if (albumIdParam && albums.some(a => a.id === albumIdParam)) {
+        this.selectedAlbumId.set(albumIdParam);
+      } else if (albums.length > 0 && !this.selectedAlbumId()) {
         this.selectedAlbumId.set(albums[0].id);
       }
     });
@@ -133,7 +137,8 @@ export class Upload {
       next: () => {
         this.uploading.set(false);
         this.done.set(true);
-        setTimeout(() => this.router.navigate(['/']), 1400);
+        const returnAlbum = this.route.snapshot.queryParamMap.get('albumId') ?? this.selectedAlbumId();
+        setTimeout(() => this.router.navigate(returnAlbum ? ['/albums', returnAlbum] : ['/']), 1400);
       },
       error: () => this.uploading.set(false),
     });

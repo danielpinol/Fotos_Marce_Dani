@@ -14,6 +14,12 @@
           <p class="album-desc">{{ album()!.description }}</p>
         }
         <p class="album-meta">{{ photos().length }} {{ photos().length === 1 ? 'pieza' : 'piezas' }}</p>
+        <a class="add-btn"
+           [routerLink]="['/upload']"
+           [queryParams]="{albumId: album()!.id}"
+           aria-label="Agregar recuerdo a este álbum">
+          + Agregar recuerdo
+        </a>
       </div>
       <div class="divider"></div>
     }
@@ -22,7 +28,14 @@
   @if (photos().length === 0) {
     <div class="empty-state">
       <div class="eg">Sala vacía</div>
-      <p>Aún no hay recuerdos aquí.<br>Sube fotos desde el botón +</p>
+      <p>Aún no hay recuerdos aquí</p>
+      @if (album()) {
+        <a class="empty-add-btn"
+           [routerLink]="['/upload']"
+           [queryParams]="{albumId: album()!.id}">
+          + Agregar primer recuerdo
+        </a>
+      }
     </div>
   } @else {
     <div class="grid" role="list">

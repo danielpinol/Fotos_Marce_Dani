@@ -77,8 +77,17 @@ export class PhotoService {
     return this.http.get<Album[]>(`${API}/api/albums`).pipe(catchError(() => of([] as Album[])));
   }
 
-  createAlbum(title: string, description: string) {
-    return this.http.post<Album>(`${API}/api/albums`, { title, description });
+  createAlbum(title: string, description: string, covers: string[] = []) {
+    return this.http.post<Album>(`${API}/api/albums`, { title, description, covers });
+  }
+
+  uploadToCloudinary(file: File) {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('upload_preset', CLOUDINARY_PRESET);
+    return this.http
+      .post<{ secure_url: string }>(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, form)
+      .pipe(map(r => r.secure_url));
   }
 
   deleteAlbum(id: string) {

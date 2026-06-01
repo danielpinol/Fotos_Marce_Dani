@@ -23,6 +23,37 @@
   background: linear-gradient(to right, rgba(201,169,110,0.35), rgba(196,123,141,0.18), transparent);
 }
 
+/* ── Add button ── */
+.add-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border: 1px solid rgba(201,169,110,0.5);
+  border-radius: 50px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  font-family: var(--font-ui);
+  transition: background 0.15s;
+}
+.add-btn:hover { background: rgba(201,169,110,0.1); }
+
+.empty-add-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 11px 24px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: var(--font-ui);
+  letter-spacing: 0.06em;
+}
+
 /* ── Photo grid ── */
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 16px 3px 0; }
 .thumb {

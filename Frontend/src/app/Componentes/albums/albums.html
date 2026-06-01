@@ -78,6 +78,19 @@
     <div class="sheet-panel" (click)="$event.stopPropagation()">
       <div class="sheet-handle"></div>
       <h2 class="sheet-title">Nueva sala</h2>
+
+      <!-- Portada -->
+      <label class="cover-pick" for="cover-input" [class.has-cover]="coverPreviewUrl()" aria-label="Añadir portada">
+        @if (coverPreviewUrl()) {
+          <img [src]="coverPreviewUrl()!" alt="Portada" class="cover-preview">
+          <span class="cover-change">Cambiar</span>
+        } @else {
+          <span class="cover-ph"><i class="bi bi-image" aria-hidden="true"></i> Portada (opcional)</span>
+        }
+      </label>
+      <input id="cover-input" type="file" accept="image/*" class="file-hidden"
+             aria-label="Seleccionar portada" (change)="onCoverChange($event)">
+
       <div class="field">
         <label class="field-label" for="album-title">Nombre</label>
         <input id="album-title" class="field-input" type="text"
@@ -99,7 +112,9 @@
       <div class="sheet-actions">
         <button class="btn-cancel" type="button" (click)="closeForm()">Cancelar</button>
         <button class="btn-create" type="button" (click)="createAlbum()"
-                [disabled]="!newTitle().trim()">Crear sala</button>
+                [disabled]="!newTitle().trim() || isCreating()">
+          {{ isCreating() ? 'Creando…' : 'Crear sala' }}
+        </button>
       </div>
     </div>
   </div>

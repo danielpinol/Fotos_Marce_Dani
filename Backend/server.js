@@ -59,9 +59,9 @@ app.get('/api/albums', async (req, res) => {
 });
 
 app.post('/api/albums', async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, covers } = req.body;
   if (!title) return res.status(400).json({ error: 'title required' });
-  const album = await Album.create({ title, description });
+  const album = await Album.create({ title, description, covers: Array.isArray(covers) ? covers : [] });
   res.json(fmtAlbum(album));
 });
 
