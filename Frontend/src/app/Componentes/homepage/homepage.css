@@ -1,50 +1,24 @@
 :host { display: block; }
 .page { padding-bottom: 20px; }
 
-/* ── Hero con foto de fondo ── */
+/* ── Hero — exacto al prototipo ── */
 .hero {
-  position: relative;
-  padding: 0 22px 36px;
+  padding: 8px 22px 6px;
   text-align: center;
-  min-height: 78dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  overflow: hidden;
-  background: url('/photos/buena.jpeg') center 18% / cover no-repeat;
 }
-
-/* Gradient overlay: transparente arriba, oscuro abajo → texto legible */
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,0.08) 0%,
-    rgba(0,0,0,0.35) 55%,
-    rgba(0,0,0,0.68) 100%
-  );
-  pointer-events: none;
-}
-
-/* Todos los hijos del hero necesitan z-index para quedar sobre el overlay */
-.hero > * { position: relative; z-index: 1; }
 .couple {
   font-family: var(--font-display);
   font-size: 42px;
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: .01em;
-  color: #fff;
-  text-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  color: var(--ink);
 }
-.amp { color: #f5c8b8; font-style: italic; font-weight: 500; }
+.amp { color: var(--accent); font-style: italic; font-weight: 500; }
 .since {
   margin-top: 8px;
   font-size: 12px;
-  color: rgba(255,255,255,0.75);
+  color: var(--ink-soft);
   letter-spacing: .02em;
 }
 
@@ -58,9 +32,8 @@
   font-size: clamp(72px, 20dvh, 108px);
   font-weight: 300;
   line-height: 1;
-  color: #fff;
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 2px 24px rgba(0,0,0,0.35);
 }
 .unit {
   display: block;
@@ -69,7 +42,7 @@
   letter-spacing: .22em;
   text-transform: uppercase;
   font-weight: 600;
-  color: rgba(255,255,255,0.65);
+  color: var(--ink-faint);
 }
 
 /* ── Timepill — bordered pill exacto ── */
@@ -81,15 +54,13 @@
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
   font-size: 13px;
-  color: rgba(255,255,255,0.8);
+  color: var(--ink-soft);
   letter-spacing: .12em;
-  border: 1px solid rgba(255,255,255,0.35);
+  border: 1px solid var(--line);
   border-radius: 999px;
   padding: 7px 16px;
-  background: rgba(0,0,0,0.18);
-  backdrop-filter: blur(8px);
 }
-.timepill b { color: #fff; font-weight: 600; }
+.timepill b { color: var(--ink); font-weight: 600; }
 
 /* ── Progress ── */
 .progress {
@@ -97,7 +68,7 @@
 }
 .track {
   height: 3px;
-  background: rgba(255,255,255,0.25);
+  background: var(--line);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -112,8 +83,8 @@
   justify-content: space-between;
   margin-top: 8px;
 }
-.prog-labels span { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: .04em; }
-.mid { color: #f5c8b8; font-weight: 600; }
+.prog-labels span { font-size: 10px; color: var(--ink-faint); letter-spacing: .04em; }
+.mid { color: var(--accent); font-weight: 600; }
 
 /* ── Exhibit meta ── */
 .ex-meta .no { text-align: right; flex-shrink: 0; }
