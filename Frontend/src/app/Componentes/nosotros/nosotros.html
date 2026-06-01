@@ -56,7 +56,7 @@
       <img [src]="stats().mostLoved!.url" alt="Pieza más querida" class="recap-img" loading="lazy">
       <div class="recap-ov">
         <div class="label" style="color:rgba(255,255,255,0.75);margin-bottom:8px">{{ currentMonthName() }} · en repaso</div>
-        <div class="recap-big">Sentimiento dominante: <em>{{ stats().topMood.label.toLowerCase() }}</em></div>
+        <div class="recap-big">Sentimiento dominante: <em>{{ stats().topMood.label.toUpperCase() }}</em></div>
         <a routerLink="/timeline" class="recap-link">
           Ver historia <i class="bi bi-chevron-right"></i>
         </a>
@@ -101,8 +101,8 @@
     }
 
     <div class="statcard">
-      <div style="font-size:32px;margin-bottom:4px">{{ stats().topMood.emoji }}</div>
-      <div class="sv" style="font-size:20px">{{ stats().topMood.label }}</div>
+      <div style="font-size:32px;margin-bottom:6px">{{ stats().topMood.emoji }}</div>
+      <div class="sv mood-sv">{{ stats().topMood.label.toUpperCase() }}</div>
       <div class="sl">mood dominante</div>
     </div>
   </div>
