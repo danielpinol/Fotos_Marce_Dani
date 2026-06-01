@@ -19,8 +19,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-prod';
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const users = {
-    dani:  process.env.DANI_PASSWORD,
-    marce: process.env.MARCE_PASSWORD,
+    dani:   process.env.DANI_PASSWORD,
+    marche: process.env.MARCE_PASSWORD,
   };
   if (!users[username] || password !== users[username]) {
     return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
