@@ -113,7 +113,7 @@
   max-width: 480px;
   background: var(--bg);
   border-radius: 24px 24px 0 0;
-  padding: 16px 22px max(32px, env(safe-area-inset-bottom));
+  padding: 16px 22px calc(max(32px, env(safe-area-inset-bottom)) + 68px);
   animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
 }
 .del-handle {
