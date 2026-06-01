@@ -16,6 +16,15 @@ const aw = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(n
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-prod';
 
 // ── Auth ─────────────────────────────────────────────────────
+// Endpoint temporal de diagnóstico — borrar después
+app.get('/api/ping', (req, res) => {
+  res.json({
+    dani_set:  !!process.env.DANI_PASSWORD,
+    marce_set: !!process.env.MARCE_PASSWORD,
+    jwt_set:   !!process.env.JWT_SECRET,
+  });
+});
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const users = {
