@@ -66,9 +66,14 @@ app.post('/api/albums', async (req, res) => {
 });
 
 app.delete('/api/albums/:id', async (req, res) => {
-  await Album.findByIdAndDelete(req.params.id);
-  await Photo.deleteMany({ albumId: req.params.id });
-  res.json({ ok: true });
+  try {
+    await Album.findByIdAndDelete(req.params.id);
+    await Photo.deleteMany({ albumId: req.params.id });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Error deleting album:', err);
+    res.status(500).json({ error: 'delete failed' });
+  }
 });
 
 // ── Photos ───────────────────────────────────────────────────

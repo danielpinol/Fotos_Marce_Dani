@@ -19,6 +19,8 @@ export class Albums {
   readonly newTitle        = signal('');
   readonly newDescription  = signal('');
   readonly albumToDelete   = signal<Album | null>(null);
+  readonly deleting        = signal(false);
+  readonly deleteError     = signal(false);
   readonly coverFile       = signal<File | null>(null);
   readonly coverPreviewUrl = signal<string | null>(null);
   readonly isCreating      = signal(false);
@@ -51,20 +53,29 @@ export class Albums {
 
   confirmDelete(album: Album, e: Event): void {
     e.stopPropagation();
+    this.deleteError.set(false);
     this.albumToDelete.set(album);
   }
-  cancelDelete(): void { this.albumToDelete.set(null); }
+  cancelDelete(): void {
+    if (this.deleting()) return;
+    this.albumToDelete.set(null);
+    this.deleteError.set(false);
+  }
 
   deleteAlbum(): void {
     const target = this.albumToDelete();
-    if (!target) return;
+    if (!target || this.deleting()) return;
+    this.deleting.set(true);
+    this.deleteError.set(false);
     this.photoService.deleteAlbum(target.id).subscribe({
       next: () => {
         this.albums.update(list => list.filter(a => a.id !== target.id));
         this.albumToDelete.set(null);
+        this.deleting.set(false);
       },
-      error: (err) => {
-        console.error('Error al eliminar álbum:', err);
+      error: () => {
+        this.deleting.set(false);
+        this.deleteError.set(true);
       },
     });
   }
