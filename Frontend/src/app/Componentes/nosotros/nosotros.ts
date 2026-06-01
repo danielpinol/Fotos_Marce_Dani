@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PhotoService, Photo, Album, Capsule } from '../../services/photo.service';
+import { AuthService } from '../../services/auth.service';
 import { MOODS } from '../homepage/homepage';
 import { MemoryMap, MapPin } from '../map/memory-map';
 
@@ -32,6 +33,7 @@ interface MapPlace {
 })
 export class Nosotros implements OnDestroy {
   private readonly photoService = inject(PhotoService);
+  readonly auth = inject(AuthService);
   private readonly now = signal(new Date());
   private readonly timer = setInterval(() => this.now.set(new Date()), 1_000);
 

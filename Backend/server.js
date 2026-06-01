@@ -2,6 +2,7 @@ require('dotenv').config();
 const express  = require('express');
 const cors     = require('cors');
 const mongoose = require('mongoose');
+const jwt      = require('jsonwebtoken');
 const { Album, Photo, Capsule, Prompt } = require('./models');
 
 mongoose.connect(process.env.MONGODB_URI);
@@ -10,8 +11,36 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Wrap async handlers so any thrown error goes to the global error handler
 const aw = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-prod';
+
+// ── Auth ─────────────────────────────────────────────────────
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  const users = {
+    dani:  process.env.DANI_PASSWORD,
+    marce: process.env.MARCE_PASSWORD,
+  };
+  if (!users[username] || password !== users[username]) {
+    return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+  }
+  const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '30d' });
+  res.json({ token, username });
+});
+
+// Middleware: protege todas las rutas /api/* excepto /api/login
+app.use('/api', (req, res, next) => {
+  if (req.path === '/login') return next();
+  const auth = req.headers.authorization;
+  if (!auth?.startsWith('Bearer ')) return res.status(401).json({ error: 'No autorizado' });
+  try {
+    jwt.verify(auth.slice(7), JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'Sesión expirada, vuelve a iniciar sesión' });
+  }
+});
 
 function fmtAlbum(doc) {
   const o = doc.toObject();
