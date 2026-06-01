@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: flex-end;
   overflow: hidden;
-  background: url('/photos/foto-marce-y-dani.jpeg') center 18% / cover no-repeat;
+  background: url('/photos/buena.jpeg') center 18% / cover no-repeat;
 }
 
 /* Gradient overlay: transparente arriba, oscuro abajo → texto legible */

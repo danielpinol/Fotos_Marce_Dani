@@ -10,6 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Wrap async handlers so any thrown error goes to the global error handler
+const aw = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
 function fmtAlbum(doc) {
   const o = doc.toObject();
   return {
@@ -53,31 +56,26 @@ function fmtPrompt(doc) {
 }
 
 // ── Albums ───────────────────────────────────────────────────
-app.get('/api/albums', async (req, res) => {
+app.get('/api/albums', aw(async (req, res) => {
   const albums = await Album.find().sort({ createdAt: 1 });
   res.json(albums.map(fmtAlbum));
-});
+}));
 
-app.post('/api/albums', async (req, res) => {
+app.post('/api/albums', aw(async (req, res) => {
   const { title, description, covers } = req.body;
   if (!title) return res.status(400).json({ error: 'title required' });
   const album = await Album.create({ title, description, covers: Array.isArray(covers) ? covers : [] });
   res.json(fmtAlbum(album));
-});
+}));
 
-app.delete('/api/albums/:id', async (req, res) => {
-  try {
-    await Album.findByIdAndDelete(req.params.id);
-    await Photo.deleteMany({ albumId: req.params.id });
-    res.json({ ok: true });
-  } catch (err) {
-    console.error('Error deleting album:', err);
-    res.status(500).json({ error: 'delete failed' });
-  }
-});
+app.delete('/api/albums/:id', aw(async (req, res) => {
+  await Album.findByIdAndDelete(req.params.id);
+  await Photo.deleteMany({ albumId: req.params.id });
+  res.json({ ok: true });
+}));
 
 // ── Photos ───────────────────────────────────────────────────
-app.post('/api/photos', async (req, res) => {
+app.post('/api/photos', aw(async (req, res) => {
   const { albumId, url, title, caption, date, place, mood, withWho, rating, tags, author } = req.body;
   if (!url) return res.status(400).json({ error: 'url required' });
   const photo = await Photo.create({
@@ -99,22 +97,22 @@ app.post('/api/photos', async (req, res) => {
     await album.save();
   }
   res.json(fmtPhoto(photo));
-});
+}));
 
-app.get('/api/albums/:id/photos', async (req, res) => {
+app.get('/api/albums/:id/photos', aw(async (req, res) => {
   const photos = await Photo.find({ albumId: req.params.id }).sort({ createdAt: 1 });
   res.json(photos.map(fmtPhoto));
-});
+}));
 
-app.patch('/api/photos/:id/caption', async (req, res) => {
+app.patch('/api/photos/:id/caption', aw(async (req, res) => {
   const photo = await Photo.findByIdAndUpdate(
     req.params.id, { caption: req.body.caption ?? '' }, { new: true }
   );
   if (!photo) return res.status(404).json({ error: 'not found' });
   res.json(fmtPhoto(photo));
-});
+}));
 
-app.patch('/api/photos/:id', async (req, res) => {
+app.patch('/api/photos/:id', aw(async (req, res) => {
   const { title, caption, mood, rating, tags, place, withWho } = req.body;
   const update = {};
   if (title   !== undefined) update.title   = title;
@@ -127,9 +125,9 @@ app.patch('/api/photos/:id', async (req, res) => {
   const photo = await Photo.findByIdAndUpdate(req.params.id, update, { new: true });
   if (!photo) return res.status(404).json({ error: 'not found' });
   res.json(fmtPhoto(photo));
-});
+}));
 
-app.post('/api/photos/:id/react', async (req, res) => {
+app.post('/api/photos/:id/react', aw(async (req, res) => {
   const { by, emoji } = req.body;
   const photo = await Photo.findById(req.params.id);
   if (!photo) return res.status(404).json({ error: 'not found' });
@@ -137,51 +135,51 @@ app.post('/api/photos/:id/react', async (req, res) => {
   if (emoji) photo.reactions.push({ by, emoji });
   await photo.save();
   res.json(fmtPhoto(photo));
-});
+}));
 
-app.post('/api/photos/:id/comment', async (req, res) => {
+app.post('/api/photos/:id/comment', aw(async (req, res) => {
   const { by, text } = req.body;
   const photo = await Photo.findById(req.params.id);
   if (!photo) return res.status(404).json({ error: 'not found' });
   photo.comments.push({ by, text, at: new Date() });
   await photo.save();
   res.json(fmtPhoto(photo));
-});
+}));
 
-app.get('/api/photos', async (req, res) => {
+app.get('/api/photos', aw(async (req, res) => {
   const photos = await Photo.find().sort({ createdAt: -1 });
   res.json(photos.map(fmtPhoto));
-});
+}));
 
-app.get('/api/photos/recent', async (req, res) => {
+app.get('/api/photos/recent', aw(async (req, res) => {
   const photos = await Photo.find().sort({ createdAt: -1 }).limit(12);
   res.json(photos.map(fmtPhoto));
-});
+}));
 
 // ── Capsules ─────────────────────────────────────────────────
-app.get('/api/capsules', async (req, res) => {
+app.get('/api/capsules', aw(async (req, res) => {
   const capsules = await Capsule.find().sort({ createdAt: 1 });
   res.json(capsules.map(fmtCapsule));
-});
+}));
 
-app.post('/api/capsules', async (req, res) => {
+app.post('/api/capsules', aw(async (req, res) => {
   const { title, note, unlock, tone, by } = req.body;
   const capsule = await Capsule.create({ title, note, unlock, tone: tone ?? 0, by });
   res.json(fmtCapsule(capsule));
-});
+}));
 
-app.delete('/api/capsules/:id', async (req, res) => {
+app.delete('/api/capsules/:id', aw(async (req, res) => {
   await Capsule.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
-});
+}));
 
 // ── Prompts ──────────────────────────────────────────────────
-app.get('/api/prompts', async (req, res) => {
+app.get('/api/prompts', aw(async (req, res) => {
   const prompts = await Prompt.find({ active: true }).sort({ createdAt: -1 });
   res.json(prompts.map(fmtPrompt));
-});
+}));
 
-app.post('/api/prompts/seed', async (req, res) => {
+app.post('/api/prompts/seed', aw(async (req, res) => {
   const count = await Prompt.countDocuments();
   if (count > 0) return res.json({ seeded: false });
   await Prompt.insertMany([
@@ -195,6 +193,12 @@ app.post('/api/prompts/seed', async (req, res) => {
     { text: 'Una foto de tu lugar favorito juntos',            period: 'weekly' },
   ]);
   res.json({ seeded: true });
+}));
+
+// Global error handler — catches any error thrown in aw() wrapped routes
+app.use((err, req, res, _next) => {
+  console.error(`[${req.method} ${req.path}]`, err.message ?? err);
+  res.status(500).json({ error: err.message ?? 'server error' });
 });
 
 const PORT = process.env.PORT || 3000;
