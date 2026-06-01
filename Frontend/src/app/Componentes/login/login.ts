@@ -30,9 +30,9 @@ export class Login {
     this.error.set('');
     this.auth.login(u, p).subscribe({
       next: () => this.router.navigate(['/']),
-      error: () => {
+      error: (err) => {
         this.loading.set(false);
-        this.error.set('Usuario o contraseña incorrectos');
+        this.error.set(err?.error?.error ?? 'Error de conexión — intenta de nuevo');
       },
     });
   }

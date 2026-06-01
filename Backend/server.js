@@ -19,11 +19,14 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-prod';
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const users = {
-    dani:   process.env.DANI_PASSWORD,
-    marche: process.env.MARCE_PASSWORD,
+    dani:   (process.env.DANI_PASSWORD  || '').trim(),
+    marche: (process.env.MARCE_PASSWORD || '').trim(),
   };
-  if (!users[username] || password !== users[username]) {
-    return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+  if (!users[username]) {
+    return res.status(401).json({ error: 'Usuario no encontrado' });
+  }
+  if (password.trim() !== users[username]) {
+    return res.status(401).json({ error: 'Contraseña incorrecta' });
   }
   const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '30d' });
   res.json({ token, username });
