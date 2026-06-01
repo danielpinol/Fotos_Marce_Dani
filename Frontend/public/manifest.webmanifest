@@ -10,16 +10,16 @@
   "lang": "es",
   "icons": [
     {
-      "src": "/photos/buena.jpeg",
-      "sizes": "any",
+      "src": "photos/buena.jpeg",
+      "sizes": "192x192",
       "type": "image/jpeg",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "photos/buena.jpeg",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "type": "image/jpeg",
+      "purpose": "any maskable"
     }
   ]
 }
