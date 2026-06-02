@@ -19,7 +19,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-prod';
 // Endpoint temporal de diagnóstico — borrar después
 app.get('/api/ping', (req, res) => {
   res.json({
-    dani_set:  !!process.env.DANI_PASSWORD,
+    dani_set:  !!process.env.DANI_PASS,
     marche_set: !!process.env.MARCHE_PASS,
     jwt_set:   !!process.env.JWT_SECRET,
   });
