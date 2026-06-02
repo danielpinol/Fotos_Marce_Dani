@@ -63,12 +63,7 @@ export class Nosotros implements OnDestroy {
     if (end.getDate() < ANNIVERSARY.getDate()) m--;
     return Math.max(0, m);
   });
-  readonly weeks = computed(() => {
-    const milestone = new Date(ANNIVERSARY);
-    milestone.setMonth(milestone.getMonth() + this.months());
-    const daysSince = Math.floor((this.now().getTime() - milestone.getTime()) / (1000 * 60 * 60 * 24));
-    return Math.floor(daysSince / 7);
-  });
+  readonly weeks = computed(() => Math.floor(this.days() / 7));
   readonly yearProgress = computed(() =>
     Math.min(100, Math.round(((this.now().getTime() - ANNIVERSARY.getTime()) / ONE_YEAR_MS) * 100))
   );
