@@ -22,6 +22,10 @@ export class Login {
     if (this.auth.isLoggedIn) this.router.navigate(['/']);
   }
 
+  onPasswordInput(val: string): void {
+    this.password.set(val ? val.charAt(0).toUpperCase() + val.slice(1) : val);
+  }
+
   submit(): void {
     const u = this.username().trim().toLowerCase();
     const p = this.password();

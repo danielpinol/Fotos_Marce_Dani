@@ -20,7 +20,7 @@
              autocomplete="current-password"
              placeholder="••••••••"
              [value]="password()"
-             (input)="password.set($any($event.target).value)"
+             (input)="onPasswordInput($any($event.target).value)"
              (keydown.enter)="submit()">
     </div>
 
