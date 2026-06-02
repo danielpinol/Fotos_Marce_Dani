@@ -16,12 +16,13 @@ export const MOODS: Record<string, { label: string; emoji: string; color: string
 
 const FALLBACK_PROMPTS = [
   'Una foto de algo que hoy te recordó a mí',
-  'Tu momento favorito de hoy, sin pensarlo mucho',
-  'Una foto de algo rojo 🍎',
-  'Una espontánea de ustedes dos, ya',
-  'El cielo, justo ahora, desde donde estás',
+  'Tu momento favorito de hoy',
+  'Una foto de mi bb',
+  'Una foto de nosotros dos',
+  'El cielo, ahorita estes donde estes',
   'Algo que te hizo reír esta semana',
-  'Un detalle bonito que notaste hoy',
+  'Un detalle bonito que viste hoy',
+  'Una foto de tu lugar favorito juntos',
 ];
 
 @Component({

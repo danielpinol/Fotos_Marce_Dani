@@ -206,14 +206,14 @@ app.use((err, req, res, _next) => {
 async function seedPrompts() {
   await Prompt.deleteMany({});
   await Prompt.insertMany([
-    { text: 'Una foto de algo que hoy te recordó a mí',        period: 'daily'  },
-    { text: 'Tu momento favorito de hoy',                      period: 'daily'  },
-    { text: 'Una foto de mi bb',                               period: 'daily'  },
-    { text: 'Una foto de nosotros dos',                        period: 'weekly' },
-    { text: 'El cielo, ahorita estes donde estes',             period: 'daily'  },
-    { text: 'Algo que te hizo reír esta semana',               period: 'weekly' },
-    { text: 'Un detalle bonito que viste hoy',                 period: 'daily'  },
-    { text: 'Una foto de tu lugar favorito juntos',            period: 'weekly' },
+    { text: 'Una foto de algo que hoy te recordó a mí',        period: 'daily',  active: true },
+    { text: 'Tu momento favorito de hoy',                      period: 'daily',  active: true },
+    { text: 'Una foto de mi bb',                               period: 'daily',  active: true },
+    { text: 'Una foto de nosotros dos',                        period: 'weekly', active: true },
+    { text: 'El cielo, ahorita estes donde estes',             period: 'daily',  active: true },
+    { text: 'Algo que te hizo reír esta semana',               period: 'weekly', active: true },
+    { text: 'Un detalle bonito que viste hoy',                 period: 'daily',  active: true },
+    { text: 'Una foto de tu lugar favorito juntos',            period: 'weekly', active: true },
   ]);
   console.log('Prompts actualizados');
 }
