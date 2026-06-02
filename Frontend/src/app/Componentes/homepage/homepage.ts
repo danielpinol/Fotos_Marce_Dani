@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PhotoService, Photo, Album } from '../../services/photo.service';
+import { PhotoService, Photo, Album, Prompt } from '../../services/photo.service';
 
 const ANNIVERSARY = new Date('2026-02-10T00:00:00');
 const ONE_YEAR_MS  = 365 * 24 * 60 * 60 * 1000;
@@ -38,9 +38,10 @@ export class Homepage implements OnDestroy {
 
   readonly recentPhotos = signal<Photo[]>([]);
   readonly albums       = signal<Album[]>([]);
+  readonly prompts      = signal<string[]>(FALLBACK_PROMPTS);
   readonly promptIdx    = signal(Math.floor(Math.random() * FALLBACK_PROMPTS.length));
 
-  readonly prompt = computed(() => FALLBACK_PROMPTS[this.promptIdx() % FALLBACK_PROMPTS.length]);
+  readonly prompt = computed(() => this.prompts()[this.promptIdx() % this.prompts().length]);
 
   readonly days = computed(() =>
     Math.floor((this.now().getTime() - ANNIVERSARY.getTime()) / (1000 * 60 * 60 * 24))
@@ -79,6 +80,9 @@ export class Homepage implements OnDestroy {
   constructor() {
     this.photoService.getRecentPhotos().subscribe(photos => this.recentPhotos.set(photos));
     this.photoService.getAlbums().subscribe(albums => this.albums.set(albums));
+    this.photoService.getPrompts().subscribe(ps => {
+      if (ps.length) this.prompts.set(ps.map((p: Prompt) => p.text));
+    });
   }
 
   moodOf(id: string) { return MOODS[id] ?? MOODS['enamorados']; }
