@@ -61,9 +61,10 @@ export class Homepage implements OnDestroy {
   readonly weeks = computed(() => Math.floor(this.days() / 7));
   readonly months = computed(() => {
     const end = this.now();
-    const m = (end.getFullYear() - ANNIVERSARY.getFullYear()) * 12
+    let m = (end.getFullYear() - ANNIVERSARY.getFullYear()) * 12
               + (end.getMonth() - ANNIVERSARY.getMonth());
-    return m < 0 ? 0 : m;
+    if (end.getDate() < ANNIVERSARY.getDate()) m--;
+    return Math.max(0, m);
   });
   readonly yearProgress = computed(() => {
     const elapsed = this.now().getTime() - ANNIVERSARY.getTime();
