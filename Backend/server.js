@@ -219,8 +219,7 @@ app.use((err, req, res, _next) => {
 });
 
 async function seedPrompts() {
-  const count = await Prompt.countDocuments();
-  if (count > 0) return;
+  await Prompt.deleteMany({});
   await Prompt.insertMany([
     { text: 'Una foto de algo que hoy te recordó a mí',        period: 'daily'  },
     { text: 'Tu momento favorito de hoy',                      period: 'daily'  },
@@ -231,7 +230,7 @@ async function seedPrompts() {
     { text: 'Un detalle bonito que viste hoy',                 period: 'daily'  },
     { text: 'Una foto de tu lugar favorito juntos',            period: 'weekly' },
   ]);
-  console.log('Prompts sembrados');
+  console.log('Prompts actualizados');
 }
 
 if (require.main === module) {
