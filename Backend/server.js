@@ -196,21 +196,6 @@ app.get('/api/prompts', aw(async (req, res) => {
   res.json(prompts.map(fmtPrompt));
 }));
 
-app.post('/api/prompts/seed', aw(async (req, res) => {
-  const count = await Prompt.countDocuments();
-  if (count > 0) return res.json({ seeded: false });
-  await Prompt.insertMany([
-    { text: 'Una foto de algo que hoy te recordó a mí',        period: 'daily'  },
-    { text: 'Tu momento favorito de hoy',                      period: 'daily'  },
-    { text: 'Una foto de mi bb',                               period: 'daily'  },
-    { text: 'Una foto de nosotros dos ',                       period: 'weekly' },
-    { text: 'El cielo, ahorita estes donde estes',             period: 'daily'  },
-    { text: 'Algo que te hizo reír esta semana',               period: 'weekly' },
-    { text: 'Un detalle bonito que viste hoy',                 period: 'daily'  },
-    { text: 'Una foto de tu lugar favorito juntos',            period: 'weekly' },
-  ]);
-  res.json({ seeded: true });
-}));
 
 // Global error handler — catches any error thrown in aw() wrapped routes
 app.use((err, req, res, _next) => {
