@@ -67,7 +67,7 @@
   <!-- Estadísticas lindas -->
   <div class="sec-head">
     <div>
-      <div class="label">Sin frialdad</div>
+      <div class="label">TE AMO</div>
       <div class="sec-title">Estadísticas lindas</div>
     </div>
   </div>
@@ -84,6 +84,9 @@
     <div class="statcard">
       <div class="sv">{{ months() }}</div>
       <div class="sl">meses juntos</div>
+      @if (remainingDays() > 0) {
+        <div class="sl" style="font-size:11px;margin-top:4px;opacity:0.6">+ {{ remainingDays() }} días</div>
+      }
     </div>
     <div class="statcard">
       <div class="sv gold">{{ stats().avgRating.toFixed(1) }}</div>

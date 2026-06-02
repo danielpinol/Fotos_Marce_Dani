@@ -28,6 +28,11 @@ export class Stats implements OnDestroy {
     return Math.max(0, m);
   });
   readonly weeks = computed(() => Math.floor(this.days() / 7));
+  readonly remainingDays = computed(() => {
+    const milestone = new Date(ANNIVERSARY);
+    milestone.setMonth(milestone.getMonth() + this.months());
+    return Math.floor((this.now().getTime() - milestone.getTime()) / (1000 * 60 * 60 * 24));
+  });
   readonly hours = computed(() =>
     Math.floor(((this.now().getTime() - ANNIVERSARY.getTime()) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   );

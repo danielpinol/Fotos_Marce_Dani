@@ -18,6 +18,9 @@
     <div class="stat-box">
       <span class="stat-num">{{ months() }}</span>
       <span class="stat-lbl">Meses</span>
+      @if (remainingDays() > 0) {
+        <span class="stat-lbl" style="font-size:11px;margin-top:4px;opacity:0.6">+ {{ remainingDays() }} días</span>
+      }
     </div>
     <div class="stat-box">
       <span class="stat-num">{{ weeks() }}</span>
