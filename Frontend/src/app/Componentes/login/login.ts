@@ -32,7 +32,13 @@ export class Login {
       next: () => this.router.navigate(['/']),
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err?.error?.error ?? 'Error de conexión — intenta de nuevo');
+        if (err.status === 0) {
+          this.error.set('Sin conexión al servidor');
+        } else if (err.status === 401) {
+          this.error.set(err.error?.error ?? 'Usuario o contraseña incorrectos');
+        } else {
+          this.error.set(`Error ${err.status} — intenta de nuevo`);
+        }
       },
     });
   }
