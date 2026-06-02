@@ -13,7 +13,7 @@
         @if (album()!.description) {
           <p class="album-desc">{{ album()!.description }}</p>
         }
-        <p class="album-meta">{{ photos().length }} {{ photos().length === 1 ? 'pieza' : 'piezas' }}</p>
+        <p class="album-meta">{{ photos().length }} {{ photos().length === 1 ? 'foto' : 'fotos' }}</p>
         <a class="add-btn"
            [routerLink]="['/upload']"
            [queryParams]="{albumId: album()!.id}"

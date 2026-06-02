@@ -3,14 +3,14 @@
   <div class="sec-head" style="padding-top:24px">
     <div>
       <div class="label">El recorrido</div>
-      <div class="sec-title">Salas / Álbumes</div>
+      <div class="sec-title">Álbumes</div>
     </div>
     <span class="label">{{ albums().length }} {{ albums().length === 1 ? 'sala' : 'salas' }}</span>
   </div>
 
   @if (albums().length === 0) {
     <div class="empty-state">
-      <div class="eg">Aún no hay salas</div>
+      <div class="eg">Aún no hay albums</div>
       <p>Crea tu primer álbum para agrupar recuerdos</p>
     </div>
   }
@@ -41,7 +41,7 @@
           </button>
         </div>
         <div class="alb-nm">{{ album.title }}</div>
-        <div class="alb-ct">{{ album.photoCount }} {{ album.photoCount === 1 ? 'pieza' : 'piezas' }}@if (album.description) { · {{ album.description }} }</div>
+        <div class="alb-ct">{{ album.photoCount }} {{ album.photoCount === 1 ? 'foto' : 'fotos' }}@if (album.description) { · {{ album.description }} }</div>
       </div>
     }
   </div>
@@ -49,7 +49,7 @@
   <div class="new-album-wrap">
     <button class="new-album-btn" type="button" (click)="openForm()" aria-label="Crear nuevo álbum">
       <span class="plus-icon">+</span>
-      <span>Nueva sala</span>
+      <span>Nuevo album</span>
     </button>
   </div>
 
