@@ -21,12 +21,17 @@ export class Stats implements OnDestroy {
   readonly days = computed(() =>
     Math.max(0, Math.floor((this.now().getTime() - ANNIVERSARY.getTime()) / (1000 * 60 * 60 * 24)))
   );
-  readonly weeks = computed(() => Math.floor(this.days() / 7));
   readonly months = computed(() => {
     const e = this.now();
     let m = (e.getFullYear() - ANNIVERSARY.getFullYear()) * 12 + (e.getMonth() - ANNIVERSARY.getMonth());
     if (e.getDate() < ANNIVERSARY.getDate()) m--;
     return Math.max(0, m);
+  });
+  readonly weeks = computed(() => {
+    const milestone = new Date(ANNIVERSARY);
+    milestone.setMonth(milestone.getMonth() + this.months());
+    const daysSince = Math.floor((this.now().getTime() - milestone.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.floor(daysSince / 7);
   });
   readonly hours = computed(() =>
     Math.floor(((this.now().getTime() - ANNIVERSARY.getTime()) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
