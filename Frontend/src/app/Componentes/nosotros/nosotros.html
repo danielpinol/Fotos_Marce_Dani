@@ -151,41 +151,6 @@
     }
   }
 
-  <!-- Cápsulas del tiempo -->
-  <div class="sec-head">
-    <div>
-      <div class="label">Para después</div>
-      <div class="sec-title">Cápsulas del tiempo</div>
-    </div>
-  </div>
-
-  @if (capsules().length === 0) {
-    <div class="empty-state" style="padding:32px 22px">
-      <div class="eg">Sin cápsulas aún</div>
-      <p>Las cápsulas del tiempo aparecerán aquí cuando las creen</p>
-    </div>
-  }
-
-  @for (cap of capsules(); track cap.id) {
-    <div class="capsule" [class.locked]="!capsuleIsOpen(cap)">
-      <div class="cap-lock">{{ capsuleIsOpen(cap) ? '✦' : '🔒' }}</div>
-      <div class="cap-info">
-        <div class="cap-title">{{ cap.title }}</div>
-        <div class="cap-date">
-          @if (capsuleIsOpen(cap)) {
-            Lista para abrir 🤍
-          } @else {
-            Se abre el {{ formatDate(cap.unlock) }}
-          }
-        </div>
-        @if (!capsuleIsOpen(cap)) {
-          <div class="cap-countdown">faltan {{ daysUntilCapsule(cap) }} días</div>
-        }
-      </div>
-      <i class="bi bi-chevron-right cap-chevron" aria-hidden="true"></i>
-    </div>
-  }
-
   <!-- Sesión -->
   <div class="logout-wrap">
     <p class="logout-user">Sesión iniciada como <strong>{{ auth.currentUser() }}</strong></p>

@@ -8,7 +8,7 @@
       <label class="field-label" for="username">Usuario</label>
       <input id="username" class="field-input" type="text"
              autocomplete="username" autocorrect="off" autocapitalize="none"
-             placeholder="dani o marce"
+             placeholder="dani o marche"
              [value]="username()"
              (input)="username.set($any($event.target).value)"
              (keydown.enter)="submit()">
@@ -16,7 +16,7 @@
 
     <div class="field">
       <label class="field-label" for="password">Contraseña</label>
-      <input id="password" class="field-input" type="password"
+      <input id="password" class="field-input" type="password" autocapitalize="true"
              autocomplete="current-password"
              placeholder="••••••••"
              [value]="password()"

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PhotoService, Photo, Album, Capsule } from '../../services/photo.service';
+import { PhotoService, Photo, Album } from '../../services/photo.service';
 import { AuthService } from '../../services/auth.service';
 import { MOODS } from '../homepage/homepage';
 import { MemoryMap, MapPin } from '../map/memory-map';
@@ -37,9 +37,8 @@ export class Nosotros implements OnDestroy {
   private readonly now = signal(new Date());
   private readonly timer = setInterval(() => this.now.set(new Date()), 1_000);
 
-  readonly photos   = signal<Photo[]>([]);
-  readonly albums   = signal<Album[]>([]);
-  readonly capsules = signal<Capsule[]>([]);
+  readonly photos = signal<Photo[]>([]);
+  readonly albums = signal<Album[]>([]);
 
   readonly days = computed(() =>
     Math.floor((this.now().getTime() - ANNIVERSARY.getTime()) / (1000 * 60 * 60 * 24))
@@ -137,20 +136,10 @@ export class Nosotros implements OnDestroy {
   constructor() {
     this.photoService.getAllPhotos().subscribe(photos => this.photos.set(photos));
     this.photoService.getAlbums().subscribe(albums => this.albums.set(albums));
-    this.photoService.getCapsules().subscribe(caps => this.capsules.set(caps));
   }
 
   selectPin(name: string): void {
     this.activePin.set(this.activePin() === name ? null : name);
-  }
-
-  capsuleIsOpen(cap: Capsule): boolean {
-    return new Date().getTime() >= new Date(cap.unlock + 'T00:00:00').getTime();
-  }
-
-  daysUntilCapsule(cap: Capsule): number {
-    const ms = new Date(cap.unlock + 'T00:00:00').getTime() - new Date().getTime();
-    return Math.max(0, Math.ceil(ms / 86400000));
   }
 
   formatDate(iso: string): string {

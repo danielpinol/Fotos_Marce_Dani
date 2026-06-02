@@ -3,7 +3,7 @@ const express  = require('express');
 const cors     = require('cors');
 const mongoose = require('mongoose');
 const jwt      = require('jsonwebtoken');
-const { Album, Photo, Capsule, Prompt } = require('./models');
+const { Album, Photo, Prompt } = require('./models');
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -80,14 +80,6 @@ function fmtPhoto(doc) {
     reactions: (o.reactions ?? []).map(r => ({ by: r.by, emoji: r.emoji })),
     comments:  (o.comments ?? []).map(c => ({ by: c.by, text: c.text, at: c.at.toISOString() })),
     createdAt: o.createdAt.toISOString(),
-  };
-}
-
-function fmtCapsule(doc) {
-  const o = doc.toObject();
-  return {
-    id: o._id.toString(), title: o.title, note: o.note,
-    unlock: o.unlock, tone: o.tone, by: o.by, createdAt: o.createdAt.toISOString(),
   };
 }
 
@@ -197,22 +189,6 @@ app.get('/api/photos/recent', aw(async (req, res) => {
   res.json(photos.map(fmtPhoto));
 }));
 
-// ── Capsules ─────────────────────────────────────────────────
-app.get('/api/capsules', aw(async (req, res) => {
-  const capsules = await Capsule.find().sort({ createdAt: 1 });
-  res.json(capsules.map(fmtCapsule));
-}));
-
-app.post('/api/capsules', aw(async (req, res) => {
-  const { title, note, unlock, tone, by } = req.body;
-  const capsule = await Capsule.create({ title, note, unlock, tone: tone ?? 0, by });
-  res.json(fmtCapsule(capsule));
-}));
-
-app.delete('/api/capsules/:id', aw(async (req, res) => {
-  await Capsule.findByIdAndDelete(req.params.id);
-  res.json({ ok: true });
-}));
 
 // ── Prompts ──────────────────────────────────────────────────
 app.get('/api/prompts', aw(async (req, res) => {

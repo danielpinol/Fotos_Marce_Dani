@@ -40,15 +40,6 @@ const photoSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const capsuleSchema = new mongoose.Schema({
-  title:     String,
-  note:      String,
-  unlock:    String,
-  tone:      { type: Number, default: 0 },
-  by:        { type: String, enum: ['dani', 'marce'] },
-  createdAt: { type: Date, default: Date.now },
-});
-
 const promptSchema = new mongoose.Schema({
   text:      String,
   period:    { type: String, enum: ['daily', 'weekly'], default: 'daily' },
@@ -56,9 +47,8 @@ const promptSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Album   = mongoose.models.Album   || mongoose.model('Album',   albumSchema);
-const Photo   = mongoose.models.Photo   || mongoose.model('Photo',   photoSchema);
-const Capsule = mongoose.models.Capsule || mongoose.model('Capsule', capsuleSchema);
-const Prompt  = mongoose.models.Prompt  || mongoose.model('Prompt',  promptSchema);
+const Album  = mongoose.models.Album  || mongoose.model('Album',  albumSchema);
+const Photo  = mongoose.models.Photo  || mongoose.model('Photo',  photoSchema);
+const Prompt = mongoose.models.Prompt || mongoose.model('Prompt', promptSchema);
 
-module.exports = { Album, Photo, Capsule, Prompt };
+module.exports = { Album, Photo, Prompt };

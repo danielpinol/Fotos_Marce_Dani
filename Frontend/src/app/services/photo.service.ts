@@ -46,16 +46,6 @@ export interface Photo {
   createdAt: string;
 }
 
-export interface Capsule {
-  id: string;
-  title: string;
-  note: string;
-  unlock: string;
-  tone: number;
-  by: 'dani' | 'marce';
-  createdAt: string;
-}
-
 export interface Prompt {
   id: string;
   text: string;
@@ -141,18 +131,6 @@ export class PhotoService {
       map(photos => photos.map(p => ({ ...p }))),
       catchError(() => of([] as Photo[])),
     );
-  }
-
-  getCapsules() {
-    return this.http.get<Capsule[]>(`${API}/api/capsules`).pipe(catchError(() => of([] as Capsule[])));
-  }
-
-  createCapsule(data: Omit<Capsule, 'id' | 'createdAt'>) {
-    return this.http.post<Capsule>(`${API}/api/capsules`, data);
-  }
-
-  deleteCapsule(id: string) {
-    return this.http.delete(`${API}/api/capsules/${id}`);
   }
 
   getPrompts() {
