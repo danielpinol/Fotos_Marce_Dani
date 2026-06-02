@@ -28,8 +28,8 @@ app.get('/api/ping', (req, res) => {
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const users = {
-    dani:   (process.env.DANI_PASSWORD  || '').trim(),
-    marche: (process.env.MARCE_PASSWORD || '').trim(),
+    dani:   (process.env.DANI_PASS   || '').trim(),
+    marche: (process.env.MARCHE_PASS || '').trim(),
   };
   if (!users[username]) {
     return res.status(401).json({ error: 'Usuario no encontrado' });
