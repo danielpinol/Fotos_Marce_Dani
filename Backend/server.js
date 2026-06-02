@@ -20,7 +20,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-prod';
 app.get('/api/ping', (req, res) => {
   res.json({
     dani_set:  !!process.env.DANI_PASSWORD,
-    marce_set: !!process.env.MARCE_PASSWORD,
+    marche_set: !!process.env.MARCHE_PASS,
     jwt_set:   !!process.env.JWT_SECRET,
   });
 });
