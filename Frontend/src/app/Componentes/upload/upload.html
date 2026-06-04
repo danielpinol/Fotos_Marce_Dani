@@ -109,7 +109,7 @@
         <div class="place-row">
           <input id="photo-place" class="field-input" type="text"
                  [value]="photoPlace()"
-                 (input)="photoPlace.set($any($event.target).value)"
+                 (input)="onPlaceInput($any($event.target).value)"
                  placeholder="Café Barista, Antigua…"
                  maxlength="60" autocomplete="off">
           <button type="button" class="geo-btn"

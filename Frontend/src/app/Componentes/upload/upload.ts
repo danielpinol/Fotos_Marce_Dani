@@ -31,6 +31,8 @@ export class Upload {
   readonly photoLng     = signal<number | null>(null);
   readonly locating     = signal(false);
   readonly locError     = signal('');
+
+  private geocodeTimer: ReturnType<typeof setTimeout> | null = null;
   readonly photoMood    = signal('enamorados');
   readonly photoWithWho = signal('Solos los dos');
   readonly photoRating  = signal(5);
@@ -104,6 +106,27 @@ export class Upload {
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  }
+
+  onPlaceInput(value: string): void {
+    this.photoPlace.set(value);
+    if (this.photoLat() !== null) return;
+    if (this.geocodeTimer) clearTimeout(this.geocodeTimer);
+    this.geocodeTimer = setTimeout(() => this.geocodePlace(value), 800);
+  }
+
+  private async geocodePlace(name: string): Promise<void> {
+    if (!name.trim()) { this.photoLat.set(null); this.photoLng.set(null); return; }
+    try {
+      const r = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=json&limit=1&accept-language=es`
+      );
+      const data = await r.json();
+      if (data[0]) {
+        this.photoLat.set(parseFloat(data[0].lat));
+        this.photoLng.set(parseFloat(data[0].lon));
+      }
+    } catch { /* silently ignore */ }
   }
 
   selectAlbum(id: string): void { this.selectedAlbumId.set(id); }

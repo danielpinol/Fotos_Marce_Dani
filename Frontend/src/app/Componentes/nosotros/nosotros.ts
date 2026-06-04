@@ -37,8 +37,9 @@ export class Nosotros implements OnDestroy {
   private readonly now = signal(new Date());
   private readonly timer = setInterval(() => this.now.set(new Date()), 1_000);
 
-  readonly photos = signal<Photo[]>([]);
-  readonly albums = signal<Album[]>([]);
+  readonly photos          = signal<Photo[]>([]);
+  readonly albums          = signal<Album[]>([]);
+  readonly geocodedCoords  = signal<Record<string, [number, number]>>({});
 
   readonly days = computed(() =>
     Math.floor((this.now().getTime() - ANNIVERSARY.getTime()) / (1000 * 60 * 60 * 24))
@@ -111,20 +112,16 @@ export class Nosotros implements OnDestroy {
   });
 
   readonly mapPins = computed<MapPin[]>(() => {
+    const geocoded = this.geocodedCoords();
     const acc: MapPin[] = [];
     for (const m of this.photos()) {
-      if (!m.place?.name || !m.place.lat || !m.place.lng) continue;
+      if (!m.place?.name) continue;
+      const lat = m.place.lat || geocoded[m.place.name]?.[0] || null;
+      const lng = m.place.lng || geocoded[m.place.name]?.[1] || null;
+      if (!lat || !lng) continue;
       const existing = acc.find(p => p.name === m.place.name);
       if (existing) { existing.count++; }
-      else {
-        acc.push({
-          name: m.place.name,
-          lat: m.place.lat,
-          lng: m.place.lng,
-          count: 1,
-          photoUrl: m.url,
-        });
-      }
+      else acc.push({ name: m.place.name, lat, lng, count: 1, photoUrl: m.url });
     }
     return acc;
   });
@@ -140,8 +137,34 @@ export class Nosotros implements OnDestroy {
   onPinClicked(pin: MapPin): void { this.activePin.set(pin.name); }
 
   constructor() {
-    this.photoService.getAllPhotos().subscribe(photos => this.photos.set(photos));
+    this.photoService.getAllPhotos().subscribe(photos => {
+      this.photos.set(photos);
+      this.geocodeMissing(photos);
+    });
     this.photoService.getAlbums().subscribe(albums => this.albums.set(albums));
+  }
+
+  private async geocodeMissing(photos: Photo[]): Promise<void> {
+    const missing = [...new Set(
+      photos
+        .filter(p => p.place?.name && (!p.place.lat || !p.place.lng))
+        .map(p => p.place.name)
+    )];
+    for (const name of missing) {
+      try {
+        const r = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=json&limit=1&accept-language=es`
+        );
+        const data = await r.json();
+        if (data[0]) {
+          this.geocodedCoords.update(c => ({
+            ...c,
+            [name]: [parseFloat(data[0].lat), parseFloat(data[0].lon)],
+          }));
+        }
+      } catch { /* ignore */ }
+      await new Promise(r => setTimeout(r, 1100));
+    }
   }
 
   selectPin(name: string): void {
