@@ -1,6 +1,60 @@
 :host { display: block; }
 .page { padding-bottom: 32px; }
 
+/* ── Overlay tabs ── */
+.ov-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  padding: 0 18px;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.ov-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 12px 20px;
+  font-family: var(--font-ui);
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-faint);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .15s, border-color .15s;
+}
+.ov-tab.active { color: var(--ink); border-bottom-color: var(--gold); }
+.ov-tab i { font-size: 14px; }
+
+/* ── Info panel ── */
+.info-panel {
+  margin: 24px 20px 0;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+.info-row {
+  display: flex; align-items: center; gap: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.info-row:last-child { border-bottom: 0; }
+.info-label {
+  display: flex; align-items: center; gap: 7px;
+  width: 120px; flex-shrink: 0;
+  padding: 15px 16px;
+  font-family: var(--font-ui);
+  font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-faint);
+  border-right: 1px solid var(--line-soft);
+  background: var(--card-2);
+}
+.info-val {
+  flex: 1;
+  padding: 15px 18px;
+  font-family: var(--font-ui);
+  font-size: 15px; font-weight: 500;
+  color: var(--ink);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+
 /* ── Header ── */
 .header { padding: 20px 24px 0; margin-bottom: 20px; }
 .back-btn {

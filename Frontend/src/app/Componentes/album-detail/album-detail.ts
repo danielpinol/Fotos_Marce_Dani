@@ -24,6 +24,7 @@ export class AlbumDetail {
   readonly album          = signal<Album | null>(null);
   readonly photos         = signal<Photo[]>([]);
   readonly lightboxIndex  = signal<number | null>(null);
+  readonly activeTab      = signal<'foto' | 'info'>('foto');
   readonly editingCaption = signal('');
   readonly saving         = signal(false);
   readonly commentText    = signal('');
@@ -53,7 +54,7 @@ export class AlbumDetail {
     });
   }
 
-  open(i: number): void { this.lightboxIndex.set(i); }
+  open(i: number): void { this.lightboxIndex.set(i); this.activeTab.set('foto'); }
   close(): void { this.lightboxIndex.set(null); }
   prev(): void { this.lightboxIndex.update(i => (i !== null && i > 0 ? i - 1 : i)); }
   next(): void {
