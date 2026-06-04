@@ -49,7 +49,7 @@
         <div class="sec-title">Lo más reciente</div>
       </div>
     </div>
-    <a routerLink="/gallery" class="exhibit" [attr.aria-label]="photoLabel(feat)">
+    <a [routerLink]="['/albums', feat.albumId]" class="exhibit" [attr.aria-label]="photoLabel(feat)">
       <div class="ex-frame">
         <img [src]="feat.url" [alt]="photoLabel(feat)" loading="eager">
       </div>
@@ -80,7 +80,7 @@
   </div>
   <div class="strip" role="list">
     @for (photo of recent(); track photo.id) {
-      <a routerLink="/gallery" class="poster" role="listitem"
+      <a [routerLink]="['/albums', photo.albumId]" class="poster" role="listitem"
          [attr.aria-label]="photoLabel(photo)">
         <div class="p-frame">
           <img [src]="photo.url" [alt]="photoLabel(photo)" loading="lazy">

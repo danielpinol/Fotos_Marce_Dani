@@ -6,7 +6,6 @@ export const routes: Routes = [
   { path: '',           canActivate: [authGuard], loadComponent: () => import('./Componentes/homepage/homepage').then(m => m.Homepage) },
   { path: 'albums',     canActivate: [authGuard], loadComponent: () => import('./Componentes/albums/albums').then(m => m.Albums) },
   { path: 'albums/:id', canActivate: [authGuard], loadComponent: () => import('./Componentes/album-detail/album-detail').then(m => m.AlbumDetail) },
-  { path: 'gallery',    canActivate: [authGuard], loadComponent: () => import('./Componentes/gallery/gallery').then(m => m.Gallery) },
   { path: 'timeline',   canActivate: [authGuard], loadComponent: () => import('./Componentes/timeline/timeline').then(m => m.Timeline) },
   { path: 'stats',      canActivate: [authGuard], loadComponent: () => import('./Componentes/stats/stats').then(m => m.Stats) },
   { path: 'nosotros',   canActivate: [authGuard], loadComponent: () => import('./Componentes/nosotros/nosotros').then(m => m.Nosotros) },
