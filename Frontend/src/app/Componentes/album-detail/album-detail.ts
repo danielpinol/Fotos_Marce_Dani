@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, computed, effect, inject, signal } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PhotoService, Album, Photo } from '../../services/photo.service';
 import { MOODS } from '../homepage/homepage';
@@ -18,10 +17,9 @@ const REACTIONS = ['🫶', '🥹', '😂', '☀️', '😍', '🥰'];
   styleUrl: './album-detail.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AlbumDetail implements OnDestroy {
+export class AlbumDetail {
   private readonly photoService = inject(PhotoService);
   private readonly route        = inject(ActivatedRoute);
-  private readonly doc          = inject(DOCUMENT);
 
   readonly album          = signal<Album | null>(null);
   readonly photos         = signal<Photo[]>([]);
@@ -62,14 +60,8 @@ export class AlbumDetail implements OnDestroy {
     this.lightboxIndex.set(i);
     this.activeTab.set('foto');
     this.deleteConfirm.set(false);
-    this.doc.body.style.overflow = 'hidden';
   }
-  close(): void {
-    this.lightboxIndex.set(null);
-    this.doc.body.style.overflow = '';
-  }
-
-  ngOnDestroy(): void { this.doc.body.style.overflow = ''; }
+  close(): void { this.lightboxIndex.set(null); }
   prev(): void { this.lightboxIndex.update(i => (i !== null && i > 0 ? i - 1 : i)); }
   next(): void {
     const max = this.photos().length - 1;
