@@ -108,6 +108,12 @@ app.delete('/api/albums/:id', aw(async (req, res) => {
 }));
 
 // ── Photos ───────────────────────────────────────────────────
+app.delete('/api/photos/:id', aw(async (req, res) => {
+  await Photo.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
+}));
+
+
 app.post('/api/photos', aw(async (req, res) => {
   const { albumId, url, title, caption, date, place, mood, withWho, rating, tags, author } = req.body;
   if (!url) return res.status(400).json({ error: 'url required' });

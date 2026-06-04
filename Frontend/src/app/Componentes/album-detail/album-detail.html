@@ -64,20 +64,19 @@
        (touchend)="onTouchEnd($event)">
 
     <div class="ov-bar">
-      <button class="iconbtn" (click)="close()" aria-label="Cerrar">
+      <button class="ov-back" (click)="close()" aria-label="Volver al álbum">
         <i class="bi bi-chevron-left"></i>
+        <span>Volver</span>
       </button>
-      <span class="ov-title">{{ photoLabel(photo) }}</span>
-      @if (lightboxIndex()! > 0) {
-        <button class="iconbtn" (click)="prev()" aria-label="Anterior">
-          <i class="bi bi-chevron-left" style="font-size:12px"></i>
+      <div class="ov-nav">
+        <button class="iconbtn" (click)="prev()" [disabled]="lightboxIndex() === 0" aria-label="Anterior">
+          <i class="bi bi-chevron-left"></i>
         </button>
-      }
-      @if (lightboxIndex()! < photos().length - 1) {
-        <button class="iconbtn" (click)="next()" aria-label="Siguiente">
-          <i class="bi bi-chevron-right" style="font-size:12px"></i>
+        <span class="ov-counter">{{ (lightboxIndex() ?? 0) + 1 }}&nbsp;/&nbsp;{{ photos().length }}</span>
+        <button class="iconbtn" (click)="next()" [disabled]="lightboxIndex()! >= photos().length - 1" aria-label="Siguiente">
+          <i class="bi bi-chevron-right"></i>
         </button>
-      }
+      </div>
     </div>
 
     <div class="ov-scroll">
@@ -99,17 +98,17 @@
       <!-- Metadata plaque -->
       <div class="plaque">
         <div class="prow">
-          <span class="pk">Fecha</span>
-          <span class="pv">{{ formatDate(photo.createdAt) }}</span>
+          <span class="pk"><i class="bi bi-calendar3"></i> Fecha</span>
+          <span class="pv">{{ photo.date ? formatMemoryDate(photo.date) : formatDate(photo.createdAt) }}</span>
         </div>
         @if (photo.place && photo.place.name) {
           <div class="prow">
-            <span class="pk">Lugar</span>
-            <span class="pv">📍 {{ photo.place.name }}</span>
+            <span class="pk"><i class="bi bi-geo-alt"></i> Lugar</span>
+            <span class="pv">{{ photo.place.name }}</span>
           </div>
         }
         <div class="prow">
-          <span class="pk">Mood</span>
+          <span class="pk"><i class="bi bi-stars"></i> Mood</span>
           <span class="pv">
             <span class="mood-chip">
               <span class="mc-dot" [style.background]="moodOf(photo.mood).color"></span>
@@ -118,11 +117,11 @@
           </span>
         </div>
         <div class="prow">
-          <span class="pk">Con quién</span>
+          <span class="pk"><i class="bi bi-people"></i> Con quién</span>
           <span class="pv">{{ photo.withWho }}</span>
         </div>
         <div class="prow">
-          <span class="pk">Momento</span>
+          <span class="pk"><i class="bi bi-star"></i> Momento</span>
           <span class="pv stars">
             @for (s of starsArray; track s) {
               <span [style.opacity]="s <= photo.rating ? '1' : '0.2'">★</span>
@@ -131,7 +130,7 @@
         </div>
         @if (photo.tags && photo.tags.length) {
           <div class="prow">
-            <span class="pk">Tags</span>
+            <span class="pk"><i class="bi bi-hash"></i> Tags</span>
             <span class="pv">
               <span class="tagrow">
                 @for (tag of photo.tags; track tag) {
@@ -142,14 +141,13 @@
           </div>
         }
         <div class="prow">
-          <span class="pk">Subida por</span>
+          <span class="pk"><i class="bi bi-person"></i> Autor</span>
           <span class="pv">
             <span class="avatar"
                   [style.background]="people[photo.author]?.color"
                   [style.width]="'22px'"
                   [style.height]="'22px'"
-                  [style.font-size]="'10px'"
-                  style="display:inline-grid;margin-right:6px">
+                  [style.font-size]="'10px'">
               {{ photo.author === 'dani' ? 'D' : 'M' }}
             </span>
             {{ people[photo.author]?.name }}

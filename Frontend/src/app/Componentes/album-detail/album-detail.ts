@@ -112,6 +112,11 @@ export class AlbumDetail {
     return new Date(iso).toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
+  formatMemoryDate(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
   formatShortDate(iso: string): string {
     return new Date(iso).toLocaleDateString('es', { day: 'numeric', month: 'short' });
   }
