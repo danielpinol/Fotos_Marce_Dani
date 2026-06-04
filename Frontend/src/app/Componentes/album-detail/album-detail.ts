@@ -30,6 +30,8 @@ export class AlbumDetail {
   readonly commentText    = signal('');
   readonly commenting     = signal(false);
   readonly activeAuthor   = signal<'dani' | 'marce'>('dani');
+  readonly deleteConfirm  = signal(false);
+  readonly deleting       = signal(false);
 
   private touchStartX = 0;
 
@@ -54,7 +56,11 @@ export class AlbumDetail {
     });
   }
 
-  open(i: number): void { this.lightboxIndex.set(i); this.activeTab.set('foto'); }
+  open(i: number): void {
+    this.lightboxIndex.set(i);
+    this.activeTab.set('foto');
+    this.deleteConfirm.set(false);
+  }
   close(): void { this.lightboxIndex.set(null); }
   prev(): void { this.lightboxIndex.update(i => (i !== null && i > 0 ? i - 1 : i)); }
   next(): void {
@@ -111,6 +117,18 @@ export class AlbumDetail {
 
   formatDate(iso: string): string {
     return new Date(iso).toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  deletePhoto(): void {
+    const photo = this.lightboxPhoto();
+    if (!photo) return;
+    this.deleting.set(true);
+    this.photoService.deletePhoto(photo.id).subscribe(() => {
+      this.photos.update(list => list.filter(p => p.id !== photo.id));
+      this.close();
+      this.deleting.set(false);
+      this.deleteConfirm.set(false);
+    });
   }
 
   formatMemoryDate(dateStr: string): string {

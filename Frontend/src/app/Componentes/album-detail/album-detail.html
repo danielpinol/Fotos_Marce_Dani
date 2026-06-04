@@ -223,43 +223,65 @@
       }
 
       @if (activeTab() === 'info') {
-        <!-- Metadata plaque -->
-        <div class="info-panel">
-          <div class="info-row">
-            <span class="info-label"><i class="bi bi-calendar3"></i> Fecha</span>
-            <span class="info-val">{{ photo.date ? formatMemoryDate(photo.date) : formatDate(photo.createdAt) }}</span>
+        <div class="info-cards">
+
+          <!-- Fecha - full width -->
+          <div class="ic ic--full">
+            <span class="ic-label"><i class="bi bi-calendar3"></i> Fecha</span>
+            <span class="ic-val ic-val--lg">{{ photo.date ? formatMemoryDate(photo.date) : formatDate(photo.createdAt) }}</span>
           </div>
+
+          <!-- Lugar - full width, solo si existe -->
           @if (photo.place && photo.place.name) {
-            <div class="info-row">
-              <span class="info-label"><i class="bi bi-geo-alt"></i> Lugar</span>
-              <span class="info-val">{{ photo.place.name }}</span>
+            <div class="ic ic--full">
+              <span class="ic-label"><i class="bi bi-geo-alt-fill"></i> Lugar</span>
+              <span class="ic-val ic-val--lg">{{ photo.place.name }}</span>
             </div>
           }
-          <div class="info-row">
-            <span class="info-label"><i class="bi bi-stars"></i> Mood</span>
-            <span class="info-val">
-              <span class="mood-chip">
+
+          <!-- Mood + Con quién - dos columnas -->
+          <div class="ic">
+            <span class="ic-label"><i class="bi bi-stars"></i> Mood</span>
+            <span class="ic-val">
+              <span class="mood-chip mood-chip--big">
                 <span class="mc-dot" [style.background]="moodOf(photo.mood).color"></span>
                 {{ moodOf(photo.mood).emoji }} {{ moodOf(photo.mood).label }}
               </span>
             </span>
           </div>
-          <div class="info-row">
-            <span class="info-label"><i class="bi bi-people"></i> Con quién</span>
-            <span class="info-val">{{ photo.withWho }}</span>
+          <div class="ic">
+            <span class="ic-label"><i class="bi bi-people-fill"></i> Con quién</span>
+            <span class="ic-val ic-val--lg">{{ photo.withWho }}</span>
           </div>
-          <div class="info-row">
-            <span class="info-label"><i class="bi bi-star"></i> Momento</span>
-            <span class="info-val stars">
+
+          <!-- Rating + Autor - dos columnas -->
+          <div class="ic">
+            <span class="ic-label"><i class="bi bi-star-fill"></i> Momento</span>
+            <span class="ic-val ic-stars">
               @for (s of starsArray; track s) {
-                <span [style.opacity]="s <= photo.rating ? '1' : '0.2'">★</span>
+                <span [style.opacity]="s <= photo.rating ? '1' : '0.25'">★</span>
               }
             </span>
           </div>
+          <div class="ic">
+            <span class="ic-label"><i class="bi bi-person-fill"></i> Autor</span>
+            <span class="ic-val" style="gap:10px">
+              <span class="avatar"
+                    [style.background]="people[photo.author]?.color"
+                    [style.width]="'30px'"
+                    [style.height]="'30px'"
+                    [style.font-size]="'12px'">
+                {{ photo.author === 'dani' ? 'D' : 'M' }}
+              </span>
+              <span class="ic-val--lg">{{ people[photo.author]?.name }}</span>
+            </span>
+          </div>
+
+          <!-- Tags - full width, solo si existen -->
           @if (photo.tags && photo.tags.length) {
-            <div class="info-row">
-              <span class="info-label"><i class="bi bi-hash"></i> Tags</span>
-              <span class="info-val">
+            <div class="ic ic--full">
+              <span class="ic-label"><i class="bi bi-hash"></i> Tags</span>
+              <span class="ic-val">
                 <span class="tagrow">
                   @for (tag of photo.tags; track tag) {
                     <span class="tag">#{{ tag }}</span>
@@ -268,19 +290,24 @@
               </span>
             </div>
           }
-          <div class="info-row">
-            <span class="info-label"><i class="bi bi-person"></i> Autor</span>
-            <span class="info-val">
-              <span class="avatar"
-                    [style.background]="people[photo.author]?.color"
-                    [style.width]="'26px'"
-                    [style.height]="'26px'"
-                    [style.font-size]="'11px'">
-                {{ photo.author === 'dani' ? 'D' : 'M' }}
-              </span>
-              {{ people[photo.author]?.name }}
-            </span>
-          </div>
+
+        </div>
+
+        <!-- Borrar recuerdo -->
+        <div class="delete-zone">
+          @if (!deleteConfirm()) {
+            <button class="delete-btn" (click)="deleteConfirm.set(true)" aria-label="Eliminar recuerdo">
+              <i class="bi bi-trash3"></i> Eliminar recuerdo
+            </button>
+          } @else {
+            <p class="delete-warn">¿Borrar este recuerdo? No se puede deshacer.</p>
+            <div class="delete-actions">
+              <button class="delete-cancel" (click)="deleteConfirm.set(false)">Cancelar</button>
+              <button class="delete-confirm" (click)="deletePhoto()" [disabled]="deleting()">
+                {{ deleting() ? 'Borrando…' : 'Sí, borrar' }}
+              </button>
+            </div>
+          }
         </div>
       }
 

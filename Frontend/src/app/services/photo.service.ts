@@ -84,6 +84,10 @@ export class PhotoService {
     return this.http.delete(`${API}/api/albums/${id}`);
   }
 
+  deletePhoto(id: string) {
+    return this.http.delete(`${API}/api/photos/${id}`);
+  }
+
   uploadPhoto(albumId: string, file: File, metadata: Partial<Omit<Photo, 'id' | 'url' | 'albumId' | 'createdAt' | 'reactions' | 'comments'>> = {}) {
     const cloudForm = new FormData();
     cloudForm.append('file', file);
