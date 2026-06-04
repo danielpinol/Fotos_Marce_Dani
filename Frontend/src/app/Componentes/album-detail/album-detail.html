@@ -109,6 +109,23 @@
           }
         </div>
 
+        <!-- Quién soy — selector ARRIBA para que aplique a reacciones y comentarios -->
+        <div class="author-select">
+          <span class="label">Estás como</span>
+          <div class="author-chips">
+            <button type="button" class="chip-opt-sm"
+                    [class.on]="activeAuthor() === 'dani'"
+                    (click)="activeAuthor.set('dani')">
+              <span class="avatar-sm" style="background:#3F6F9F">D</span> Dani
+            </button>
+            <button type="button" class="chip-opt-sm"
+                    [class.on]="activeAuthor() === 'marce'"
+                    (click)="activeAuthor.set('marce')">
+              <span class="avatar-sm" style="background:#B0564C">M</span> Marche
+            </button>
+          </div>
+        </div>
+
         <!-- Reactions -->
         <div class="react-bar" role="group" aria-label="Reacciones">
           @for (e of reactions; track e) {
@@ -160,23 +177,6 @@
           @if (photo.comments.length === 0) {
             <p class="no-notes">Sé el primero en dejar una nota.</p>
           }
-        </div>
-
-        <!-- Who am I selector -->
-        <div class="author-select">
-          <span class="label">Comentar como</span>
-          <div class="author-chips">
-            <button type="button" class="chip-opt-sm"
-                    [class.on]="activeAuthor() === 'dani'"
-                    (click)="activeAuthor.set('dani')">
-              <span class="avatar-sm" style="background:#3F6F9F">D</span> Dani
-            </button>
-            <button type="button" class="chip-opt-sm"
-                    [class.on]="activeAuthor() === 'marce'"
-                    (click)="activeAuthor.set('marce')">
-              <span class="avatar-sm" style="background:#B0564C">M</span> Marche
-            </button>
-          </div>
         </div>
 
         <!-- Comment composer -->
