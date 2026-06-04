@@ -223,73 +223,75 @@
       }
 
       @if (activeTab() === 'info') {
-        <div class="info-cards">
+        <div class="info-sheet">
 
-          <!-- Fecha - full width -->
-          <div class="ic ic--full">
-            <span class="ic-label"><i class="bi bi-calendar3"></i> Fecha</span>
-            <span class="ic-val ic-val--lg">{{ photo.date ? formatMemoryDate(photo.date) : formatDate(photo.createdAt) }}</span>
-          </div>
-
-          <!-- Lugar - full width, solo si existe -->
-          @if (photo.place && photo.place.name) {
-            <div class="ic ic--full">
-              <span class="ic-label"><i class="bi bi-geo-alt-fill"></i> Lugar</span>
-              <span class="ic-val ic-val--lg">{{ photo.place.name }}</span>
+          <!-- Grupo 1: Cuándo y dónde -->
+          <div class="is-group">
+            <div class="is-row">
+              <div class="is-lbl"><i class="bi bi-calendar3"></i> Fecha</div>
+              <div class="is-val">{{ photo.date ? formatMemoryDate(photo.date) : formatDate(photo.createdAt) }}</div>
             </div>
-          }
-
-          <!-- Mood + Con quién - dos columnas -->
-          <div class="ic">
-            <span class="ic-label"><i class="bi bi-stars"></i> Mood</span>
-            <span class="ic-val">
-              <span class="mood-chip mood-chip--big">
-                <span class="mc-dot" [style.background]="moodOf(photo.mood).color"></span>
-                {{ moodOf(photo.mood).emoji }} {{ moodOf(photo.mood).label }}
-              </span>
-            </span>
-          </div>
-          <div class="ic">
-            <span class="ic-label"><i class="bi bi-people-fill"></i> Con quién</span>
-            <span class="ic-val ic-val--lg">{{ photo.withWho }}</span>
+            @if (photo.place && photo.place.name) {
+              <div class="is-row">
+                <div class="is-lbl"><i class="bi bi-geo-alt-fill"></i> Lugar</div>
+                <div class="is-val">{{ photo.place.name }}</div>
+              </div>
+            }
           </div>
 
-          <!-- Rating + Autor - dos columnas -->
-          <div class="ic">
-            <span class="ic-label"><i class="bi bi-star-fill"></i> Momento</span>
-            <span class="ic-val ic-stars">
-              @for (s of starsArray; track s) {
-                <span [style.opacity]="s <= photo.rating ? '1' : '0.25'">★</span>
-              }
-            </span>
-          </div>
-          <div class="ic">
-            <span class="ic-label"><i class="bi bi-person-fill"></i> Autor</span>
-            <span class="ic-val" style="gap:10px">
-              <span class="avatar"
-                    [style.background]="people[photo.author]?.color"
-                    [style.width]="'30px'"
-                    [style.height]="'30px'"
-                    [style.font-size]="'12px'">
-                {{ photo.author === 'dani' ? 'D' : 'M' }}
-              </span>
-              <span class="ic-val--lg">{{ people[photo.author]?.name }}</span>
-            </span>
-          </div>
-
-          <!-- Tags - full width, solo si existen -->
-          @if (photo.tags && photo.tags.length) {
-            <div class="ic ic--full">
-              <span class="ic-label"><i class="bi bi-hash"></i> Tags</span>
-              <span class="ic-val">
-                <span class="tagrow">
-                  @for (tag of photo.tags; track tag) {
-                    <span class="tag">#{{ tag }}</span>
-                  }
+          <!-- Grupo 2: Cómo fue -->
+          <div class="is-group">
+            <div class="is-row">
+              <div class="is-lbl"><i class="bi bi-stars"></i> Mood</div>
+              <div class="is-val">
+                <span class="mood-chip mood-chip--big">
+                  <span class="mc-dot" [style.background]="moodOf(photo.mood).color"></span>
+                  {{ moodOf(photo.mood).emoji }} {{ moodOf(photo.mood).label }}
                 </span>
-              </span>
+              </div>
             </div>
-          }
+            <div class="is-row">
+              <div class="is-lbl"><i class="bi bi-people-fill"></i> Con quién</div>
+              <div class="is-val">{{ photo.withWho }}</div>
+            </div>
+            <div class="is-row">
+              <div class="is-lbl"><i class="bi bi-star-fill"></i> Momento</div>
+              <div class="is-val is-stars">
+                @for (s of starsArray; track s) {
+                  <span [style.opacity]="s <= photo.rating ? '1' : '0.2'">★</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Grupo 3: Tags + Autor -->
+          <div class="is-group">
+            @if (photo.tags && photo.tags.length) {
+              <div class="is-row">
+                <div class="is-lbl"><i class="bi bi-hash"></i> Tags</div>
+                <div class="is-val">
+                  <span class="tagrow">
+                    @for (tag of photo.tags; track tag) {
+                      <span class="tag">#{{ tag }}</span>
+                    }
+                  </span>
+                </div>
+              </div>
+            }
+            <div class="is-row">
+              <div class="is-lbl"><i class="bi bi-person-fill"></i> Autor</div>
+              <div class="is-val">
+                <span class="avatar"
+                      [style.background]="people[photo.author]?.color"
+                      [style.width]="'32px'"
+                      [style.height]="'32px'"
+                      [style.font-size]="'13px'">
+                  {{ photo.author === 'dani' ? 'D' : 'M' }}
+                </span>
+                {{ people[photo.author]?.name }}
+              </div>
+            </div>
+          </div>
 
         </div>
 

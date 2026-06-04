@@ -1,6 +1,9 @@
 :host { display: block; }
 .page { padding-bottom: 32px; }
 
+/* Forzar overlay a pantalla completa en este componente */
+.overlay { max-width: 100% !important; left: 0 !important; transform: none !important; width: 100% !important; }
+
 /* ── Overlay tabs ── */
 .ov-tabs {
   display: flex;
@@ -22,34 +25,34 @@
 .ov-tab.active { color: var(--ink); border-bottom-color: var(--gold); }
 .ov-tab i { font-size: 14px; }
 
-/* ── Info cards ── */
-.info-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 20px 18px 0;
-}
-.ic {
+/* ── Info sheet ── */
+.info-sheet { padding: 18px 18px 0; display: flex; flex-direction: column; gap: 14px; }
+.is-group {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
-  padding: 16px 16px 18px;
-  display: flex; flex-direction: column; gap: 10px;
+  overflow: hidden;
 }
-.ic--full { grid-column: 1 / -1; }
-.ic-label {
+.is-row {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.is-row:last-child { border-bottom: 0; }
+.is-lbl {
   display: flex; align-items: center; gap: 6px;
   font-family: var(--font-ui);
-  font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
   color: var(--ink-faint);
+  margin-bottom: 7px;
 }
-.ic-val {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  font-family: var(--font-ui); font-size: 15px; font-weight: 500; color: var(--ink);
+.is-val {
+  font-family: var(--font-ui);
+  font-size: 18px; font-weight: 600; color: var(--ink);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  line-height: 1.3;
 }
-.ic-val--lg { font-size: 17px; font-weight: 600; color: var(--ink); }
-.ic-stars { font-size: 22px; color: var(--gold); gap: 2px; letter-spacing: -1px; }
-.mood-chip--big { font-size: 13px; padding: 6px 12px 6px 10px; }
+.is-stars { font-size: 24px; color: var(--gold); gap: 3px; }
+.mood-chip--big { font-size: 14px; padding: 7px 14px 7px 10px; }
 
 /* ── Delete zone ── */
 .delete-zone { margin: 24px 18px 0; padding-bottom: 8px; }
