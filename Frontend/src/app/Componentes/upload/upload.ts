@@ -25,7 +25,7 @@ export class Upload {
   // New metadata fields
   readonly photoTitle   = signal('');
   readonly photoCaption = signal('');
-  readonly photoDate    = signal(new Date().toISOString().slice(0, 10));
+  readonly photoDate    = signal(new Date().toLocaleDateString('sv', { timeZone: 'America/Guatemala' }));
   readonly photoPlace   = signal('');
   readonly photoLat     = signal<number | null>(null);
   readonly photoLng     = signal<number | null>(null);

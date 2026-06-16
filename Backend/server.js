@@ -121,7 +121,7 @@ app.post('/api/photos', aw(async (req, res) => {
     albumId, url,
     title:   title   ?? '',
     caption: caption ?? '',
-    date:    date    ?? new Date().toISOString().slice(0, 10),
+    date:    date    ?? new Date().toLocaleDateString('sv', { timeZone: 'America/Guatemala' }),
     place:   place   ?? { name: '', lat: null, lng: null },
     mood:    mood    ?? 'enamorados',
     withWho: withWho ?? 'Solos los dos',
@@ -139,7 +139,7 @@ app.post('/api/photos', aw(async (req, res) => {
 }));
 
 app.get('/api/albums/:id/photos', aw(async (req, res) => {
-  const photos = await Photo.find({ albumId: req.params.id }).sort({ createdAt: 1 });
+  const photos = await Photo.find({ albumId: req.params.id }).sort({ date: -1, createdAt: -1 });
   res.json(photos.map(fmtPhoto));
 }));
 
