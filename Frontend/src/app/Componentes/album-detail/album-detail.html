@@ -56,7 +56,7 @@
 </div>
 
 <!-- Lightbox / Detail overlay -->
-@if (lightboxPhoto(); as photo) {
+@for (photo of lightboxPhoto() ? [lightboxPhoto()!] : []; track photo.id) {
   <div class="overlay"
        role="dialog" aria-modal="true"
        [attr.aria-label]="photoLabel(photo)"

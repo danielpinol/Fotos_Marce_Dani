@@ -62,10 +62,16 @@ export class AlbumDetail {
     this.deleteConfirm.set(false);
   }
   close(): void { this.lightboxIndex.set(null); }
-  prev(): void { this.lightboxIndex.update(i => (i !== null && i > 0 ? i - 1 : i)); }
+  prev(): void {
+    this.lightboxIndex.update(i => (i !== null && i > 0 ? i - 1 : i));
+    this.activeTab.set('foto');
+    this.deleteConfirm.set(false);
+  }
   next(): void {
     const max = this.photos().length - 1;
     this.lightboxIndex.update(i => (i !== null && i < max ? i + 1 : i));
+    this.activeTab.set('foto');
+    this.deleteConfirm.set(false);
   }
   onTouchStart(e: TouchEvent): void { this.touchStartX = e.touches[0].clientX; }
   onTouchEnd(e: TouchEvent): void {
