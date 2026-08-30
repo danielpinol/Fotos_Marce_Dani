@@ -1,7 +1,7 @@
 <div class="sec-head">
   <div>
     <div class="label">Nuestra lista</div>
-    <div class="sec-title">Cine en pareja</div>
+    <div class="sec-title">Cine y waye</div>
   </div>
   <button
     type="button"
@@ -22,7 +22,7 @@
       class="peli-input"
       type="text"
       formControlName="title"
-      placeholder="¿Qué peli vemos?"
+      placeholder="¿Que miramos?"
       autocomplete="off">
 
     <label class="visually-hidden" for="peli-notes">Nota opcional</label>
@@ -31,7 +31,7 @@
       class="peli-input peli-input-sm"
       type="text"
       formControlName="notes"
-      placeholder="Dónde verla, por qué, quién la recomendó…"
+      placeholder="Quien la recomendo?"
       autocomplete="off">
 
     <button type="submit" class="peli-save" [disabled]="form.invalid || guardando()">
@@ -69,10 +69,10 @@
   <div class="empty-state peli-empty">
     @if (carpeta() === 'pendientes') {
       <div class="eg">🍿</div>
-      <p>Todavía no hay pelis pendientes.<br>Anotá la próxima que quieran ver.</p>
+      <p>Todavía no hay peliculas pendientes.<br>Cual va a ser la proxima?</p>
     } @else {
       <div class="eg">💛</div>
-      <p>Aún no han marcado ninguna como vista.<br>Cuando vean una, va a quedar guardada acá.</p>
+      <p>Aún no han marcado ninguna como vista.
     }
   </div>
 } @else {
