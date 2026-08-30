@@ -4,6 +4,7 @@ const cors     = require('cors');
 const mongoose = require('mongoose');
 const jwt      = require('jsonwebtoken');
 const { Album, Photo, Prompt } = require('./models');
+const { crearBackup } = require('./backup');
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -40,6 +41,21 @@ app.post('/api/login', (req, res) => {
   const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '30d' });
   res.json({ token, username });
 });
+
+// ── Respaldo automatico ──────────────────────────────────────
+// Lo dispara el cron de Vercel una vez al dia. Se declara antes del middleware
+// de sesion porque el cron no tiene login: se identifica con CRON_SECRET.
+app.get('/api/backup', aw(async (req, res) => {
+  const secreto = process.env.CRON_SECRET;
+  const enviado = (req.headers.authorization ?? '').replace('Bearer ', '').trim();
+  if (!secreto || enviado !== secreto) {
+    return res.status(401).json({ error: 'No autorizado' });
+  }
+  // En Vercel el disco es de solo lectura, por eso el respaldo solo va a Cloudinary
+  const resultado = await crearBackup();
+  console.log('Respaldo automatico listo:', resultado.archivo, resultado.conteos);
+  res.json({ ok: true, ...resultado });
+}));
 
 // Middleware: protege todas las rutas /api/* excepto /api/login
 app.use('/api', (req, res, next) => {
