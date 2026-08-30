@@ -91,7 +91,8 @@ export class Albums {
       switchMap(url => this.photoService.createAlbum(title, description, url ? [url] : []))
     ).subscribe({
       next: album => {
-        this.albums.update(list => [...list, album]);
+        // Al frente, para respetar el orden por movimiento que manda la API
+        this.albums.update(list => [album, ...list]);
         this.showForm.set(false);
         this.isCreating.set(false);
       },

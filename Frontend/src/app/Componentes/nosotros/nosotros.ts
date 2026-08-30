@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PhotoService, Photo, Album } from '../../services/photo.service';
+import { PhotoService, Photo } from '../../services/photo.service';
 import { AuthService } from '../../services/auth.service';
 import { MOODS } from '../homepage/homepage';
-import { MemoryMap, MapPin } from '../map/memory-map';
+import { Peliculas } from '../peliculas/peliculas';
 
 const ANNIVERSARY  = new Date('2026-02-10T00:00:00');
 const ONE_YEAR_MS  = 365 * 24 * 60 * 60 * 1000;
@@ -17,16 +17,9 @@ interface StatSummary {
   mostLoved:Photo | null;
 }
 
-interface MapPlace {
-  name: string;
-  x: number;
-  y: number;
-  count: number;
-}
-
 @Component({
   selector: 'app-nosotros',
-  imports: [RouterLink, MemoryMap],
+  imports: [RouterLink, Peliculas],
   templateUrl: './nosotros.html',
   styleUrl: './nosotros.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,9 +30,7 @@ export class Nosotros implements OnDestroy {
   private readonly now = signal(new Date());
   private readonly timer = setInterval(() => this.now.set(new Date()), 1_000);
 
-  readonly photos          = signal<Photo[]>([]);
-  readonly albums          = signal<Album[]>([]);
-  readonly geocodedCoords  = signal<Record<string, [number, number]>>({});
+  readonly photos = signal<Photo[]>([]);
 
   readonly days = computed(() =>
     Math.floor((this.now().getTime() - ANNIVERSARY.getTime()) / (1000 * 60 * 60 * 24))
@@ -111,76 +102,12 @@ export class Nosotros implements OnDestroy {
     };
   });
 
-  readonly mapPins = computed<MapPin[]>(() => {
-    const geocoded = this.geocodedCoords();
-    const acc: MapPin[] = [];
-    for (const m of this.photos()) {
-      if (!m.place?.name) continue;
-      const lat = m.place.lat || geocoded[m.place.name]?.[0] || null;
-      const lng = m.place.lng || geocoded[m.place.name]?.[1] || null;
-      if (!lat || !lng) continue;
-      const existing = acc.find(p => p.name === m.place.name);
-      if (existing) { existing.count++; }
-      else acc.push({ name: m.place.name, lat, lng, count: 1, photoUrl: m.url });
-    }
-    return acc;
-  });
-
-  readonly activePin = signal<string | null>(null);
-
-  readonly pinMemories = computed(() => {
-    const pin = this.activePin();
-    if (!pin) return [];
-    return this.photos().filter(p => p.place?.name === pin);
-  });
-
-  onPinClicked(pin: MapPin): void { this.activePin.set(pin.name); }
-
   constructor() {
-    this.photoService.getAllPhotos().subscribe(photos => {
-      this.photos.set(photos);
-      this.geocodeMissing(photos);
-    });
-    this.photoService.getAlbums().subscribe(albums => this.albums.set(albums));
-  }
-
-  private async geocodeMissing(photos: Photo[]): Promise<void> {
-    const missing = [...new Set(
-      photos
-        .filter(p => p.place?.name && (!p.place.lat || !p.place.lng))
-        .map(p => p.place.name)
-    )];
-    for (const name of missing) {
-      try {
-        const r = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=json&limit=1&accept-language=es`
-        );
-        const data = await r.json();
-        if (data[0]) {
-          this.geocodedCoords.update(c => ({
-            ...c,
-            [name]: [parseFloat(data[0].lat), parseFloat(data[0].lon)],
-          }));
-        }
-      } catch { /* ignore */ }
-      await new Promise(r => setTimeout(r, 1100));
-    }
-  }
-
-  selectPin(name: string): void {
-    this.activePin.set(this.activePin() === name ? null : name);
-  }
-
-  formatDate(iso: string): string {
-    return new Date(iso + 'T00:00:00').toLocaleDateString('es', { day: 'numeric', month: 'long', year: 'numeric' });
+    this.photoService.getAllPhotos().subscribe(photos => this.photos.set(photos));
   }
 
   currentMonthName(): string {
     return new Date().toLocaleDateString('es', { month: 'long', year: 'numeric' });
-  }
-
-  albumName(albumId: string): string {
-    return this.albums().find(a => a.id === albumId)?.title ?? '';
   }
 
   ngOnDestroy() { clearInterval(this.timer); }

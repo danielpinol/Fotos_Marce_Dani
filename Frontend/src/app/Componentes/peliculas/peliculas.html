@@ -1,0 +1,132 @@
+<div class="sec-head">
+  <div>
+    <div class="label">Nuestra lista</div>
+    <div class="sec-title">Cine en pareja</div>
+  </div>
+  <button
+    type="button"
+    class="peli-add-btn"
+    (click)="mostrarForm() ? cerrarForm() : abrirForm()"
+    [attr.aria-expanded]="mostrarForm()"
+    aria-controls="peli-form">
+    <i class="bi" [class.bi-plus-lg]="!mostrarForm()" [class.bi-x-lg]="mostrarForm()" aria-hidden="true"></i>
+    <span class="visually-hidden">{{ mostrarForm() ? 'Cerrar formulario' : 'Agregar película' }}</span>
+  </button>
+</div>
+
+@if (mostrarForm()) {
+  <form id="peli-form" class="peli-form" [formGroup]="form" (ngSubmit)="agregar()">
+    <label class="visually-hidden" for="peli-title">Nombre de la película</label>
+    <input
+      id="peli-title"
+      class="peli-input"
+      type="text"
+      formControlName="title"
+      placeholder="¿Qué peli vemos?"
+      autocomplete="off">
+
+    <label class="visually-hidden" for="peli-notes">Nota opcional</label>
+    <input
+      id="peli-notes"
+      class="peli-input peli-input-sm"
+      type="text"
+      formControlName="notes"
+      placeholder="Dónde verla, por qué, quién la recomendó…"
+      autocomplete="off">
+
+    <button type="submit" class="peli-save" [disabled]="form.invalid || guardando()">
+      {{ guardando() ? 'Guardando…' : 'Agregar a la lista' }}
+    </button>
+  </form>
+}
+
+<div class="peli-tabs" role="tablist" aria-label="Carpetas de películas">
+  <button
+    type="button"
+    role="tab"
+    class="peli-tab"
+    [class.activa]="carpeta() === 'pendientes'"
+    [attr.aria-selected]="carpeta() === 'pendientes'"
+    (click)="verCarpeta('pendientes')">
+    <i class="bi bi-collection-play" aria-hidden="true"></i>
+    Por ver
+    <span class="peli-badge">{{ pendientes().length }}</span>
+  </button>
+  <button
+    type="button"
+    role="tab"
+    class="peli-tab"
+    [class.activa]="carpeta() === 'vistas'"
+    [attr.aria-selected]="carpeta() === 'vistas'"
+    (click)="verCarpeta('vistas')">
+    <i class="bi bi-heart-fill" aria-hidden="true"></i>
+    Ya las vimos
+    <span class="peli-badge">{{ vistas().length }}</span>
+  </button>
+</div>
+
+@if (enPantalla().length === 0) {
+  <div class="empty-state peli-empty">
+    @if (carpeta() === 'pendientes') {
+      <div class="eg">🍿</div>
+      <p>Todavía no hay pelis pendientes.<br>Anotá la próxima que quieran ver.</p>
+    } @else {
+      <div class="eg">💛</div>
+      <p>Aún no han marcado ninguna como vista.<br>Cuando vean una, va a quedar guardada acá.</p>
+    }
+  </div>
+} @else {
+  <ul class="peli-list">
+    @for (peli of enPantalla(); track peli.id) {
+      <li class="peli-row" [class.vista]="peli.watched">
+        <button
+          type="button"
+          class="peli-check"
+          (click)="alternarVista(peli)"
+          [attr.aria-label]="peli.watched ? 'Marcar ' + peli.title + ' como no vista' : 'Marcar ' + peli.title + ' como vista'">
+          <i class="bi" [class.bi-check-circle-fill]="peli.watched" [class.bi-circle]="!peli.watched" aria-hidden="true"></i>
+        </button>
+
+        <div class="peli-info">
+          <div class="peli-title">{{ peli.title }}</div>
+
+          @if (peli.notes) {
+            <div class="peli-notes">{{ peli.notes }}</div>
+          }
+
+          <div class="peli-meta">
+            <span>Agregada por {{ nombreDe(peli.addedBy) }}</span>
+            @if (peli.watched && peli.watchedAt) {
+              <span class="peli-sep">·</span>
+              <span>Vista el {{ fechaVista(peli.watchedAt) }}</span>
+            }
+          </div>
+
+          @if (peli.watched) {
+            <div class="peli-stars" role="group" [attr.aria-label]="'Calificación de ' + peli.title">
+              @for (n of estrellas; track n) {
+                <button
+                  type="button"
+                  class="peli-star"
+                  [class.llena]="peli.rating !== null && n <= peli.rating"
+                  (click)="calificar(peli, n)"
+                  [attr.aria-label]="n + ' de 5 estrellas'"
+                  [attr.aria-pressed]="peli.rating !== null && n <= peli.rating">
+                  <i class="bi bi-star-fill" aria-hidden="true"></i>
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="peli-del"
+          (click)="borrar(peli)"
+          [attr.aria-label]="'Quitar ' + peli.title + ' de la lista'">
+          <i class="bi bi-trash3" aria-hidden="true"></i>
+        </button>
+      </li>
+    }
+  </ul>
+}

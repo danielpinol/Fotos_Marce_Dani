@@ -3,7 +3,7 @@ const express  = require('express');
 const cors     = require('cors');
 const mongoose = require('mongoose');
 const jwt      = require('jsonwebtoken');
-const { Album, Photo, Prompt } = require('./models');
+const { Album, Photo, Movie, Prompt } = require('./models');
 const { crearBackup } = require('./backup');
 
 mongoose.connect(process.env.MONGODB_URI);
@@ -105,8 +105,22 @@ function fmtPrompt(doc) {
 }
 
 // ── Albums ───────────────────────────────────────────────────
+// Los albums se ordenan por movimiento: el que recibio una foto mas
+// recientemente sale de primero (arriba a la izquierda en la pantalla)
 app.get('/api/albums', aw(async (req, res) => {
-  const albums = await Album.find().sort({ createdAt: 1 });
+  const albums = await Album.find();
+
+  // Fecha de la ultima foto subida a cada album, en una sola consulta
+  const ultimas = await Photo.aggregate([
+    { $group: { _id: '$albumId', ultima: { $max: '$createdAt' } } },
+  ]);
+  const ultimaPorAlbum = new Map(ultimas.map(u => [String(u._id), u.ultima]));
+
+  // Un album sin fotos todavia no tiene movimiento, asi que vale su fecha de
+  // creacion; de lo contrario los recien creados quedarian hasta el final
+  const movimiento = a => ultimaPorAlbum.get(String(a._id)) ?? a.createdAt;
+  albums.sort((a, b) => movimiento(b) - movimiento(a));
+
   res.json(albums.map(fmtAlbum));
 }));
 
@@ -211,6 +225,59 @@ app.get('/api/photos/recent', aw(async (req, res) => {
   res.json(photos.map(fmtPhoto));
 }));
 
+
+// ── Pelis ────────────────────────────────────────────────────
+function fmtMovie(doc) {
+  const o = doc.toObject();
+  return {
+    id:        o._id.toString(),
+    title:     o.title,
+    notes:     o.notes ?? '',
+    addedBy:   o.addedBy ?? 'dani',
+    watched:   !!o.watched,
+    watchedAt: o.watchedAt ? o.watchedAt.toISOString() : null,
+    rating:    o.rating ?? null,
+    createdAt: o.createdAt.toISOString(),
+  };
+}
+
+app.get('/api/movies', aw(async (req, res) => {
+  const movies = await Movie.find().sort({ createdAt: -1 });
+  res.json(movies.map(fmtMovie));
+}));
+
+app.post('/api/movies', aw(async (req, res) => {
+  const { title, notes, addedBy } = req.body;
+  if (!title?.trim()) return res.status(400).json({ error: 'title required' });
+  const movie = await Movie.create({
+    title:   title.trim(),
+    notes:   notes?.trim() ?? '',
+    addedBy: addedBy ?? 'dani',
+  });
+  res.json(fmtMovie(movie));
+}));
+
+app.patch('/api/movies/:id', aw(async (req, res) => {
+  const { title, notes, watched, rating } = req.body;
+  const update = {};
+  if (title  !== undefined) update.title  = title.trim();
+  if (notes  !== undefined) update.notes  = notes;
+  if (rating !== undefined) update.rating = rating;
+  // Marcarla como vista deja constancia de cuando la vimos; desmarcarla la borra
+  if (watched !== undefined) {
+    update.watched   = !!watched;
+    update.watchedAt = watched ? new Date() : null;
+    if (!watched) update.rating = null;
+  }
+  const movie = await Movie.findByIdAndUpdate(req.params.id, update, { new: true });
+  if (!movie) return res.status(404).json({ error: 'not found' });
+  res.json(fmtMovie(movie));
+}));
+
+app.delete('/api/movies/:id', aw(async (req, res) => {
+  await Movie.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
+}));
 
 // ── Prompts ──────────────────────────────────────────────────
 app.get('/api/prompts', aw(async (req, res) => {

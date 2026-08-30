@@ -63,7 +63,7 @@ function revisarCredenciales() {
 async function volcarColecciones() {
   const db = mongoose.connection.db;
   const datos = {};
-  for (const nombre of ['albums', 'photos', 'prompts']) {
+  for (const nombre of ['albums', 'photos', 'movies', 'prompts']) {
     datos[nombre] = await db.collection(nombre).find({}).toArray();
   }
   return datos;

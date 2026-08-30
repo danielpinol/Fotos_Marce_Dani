@@ -40,6 +40,18 @@ const photoSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+// Lista de pelis que queremos ver juntos. Cuando una se marca como vista
+// pasa a la otra lista, con la fecha en que la vimos.
+const movieSchema = new mongoose.Schema({
+  title:     String,
+  notes:     { type: String, default: '' },
+  addedBy:   { type: String, enum: ['dani', 'marce'], default: 'dani' },
+  watched:   { type: Boolean, default: false },
+  watchedAt: { type: Date, default: null },
+  rating:    { type: Number, default: null },
+  createdAt: { type: Date, default: Date.now },
+});
+
 const promptSchema = new mongoose.Schema({
   text:      String,
   period:    { type: String, enum: ['daily', 'weekly'], default: 'daily' },
@@ -49,6 +61,7 @@ const promptSchema = new mongoose.Schema({
 
 const Album  = mongoose.models.Album  || mongoose.model('Album',  albumSchema);
 const Photo  = mongoose.models.Photo  || mongoose.model('Photo',  photoSchema);
+const Movie  = mongoose.models.Movie  || mongoose.model('Movie',  movieSchema);
 const Prompt = mongoose.models.Prompt || mongoose.model('Prompt', promptSchema);
 
-module.exports = { Album, Photo, Prompt };
+module.exports = { Album, Photo, Movie, Prompt };

@@ -110,49 +110,8 @@
     </div>
   </div>
 
-  <!-- Mapa de recuerdos -->
-  <div class="sec-head">
-    <div>
-      <div class="label">Geografía nuestra</div>
-      <div class="sec-title">Mapa de recuerdos</div>
-    </div>
-  </div>
-
-  @if (mapPins().length === 0) {
-    <div class="empty-state" style="padding:32px 22px">
-      <div class="eg">Sin ubicaciones aún</div>
-      <p>Activa la ubicación al subir fotos para verlas en el mapa</p>
-    </div>
-  } @else {
-    <div class="real-map-wrap">
-      <app-memory-map
-        [pins]="mapPins()"
-        [center]="[14.64, -90.51]"
-        [zoom]="6"
-        (pinClicked)="onPinClicked($event)"
-        style="height:260px;display:block;border-radius:14px;overflow:hidden">
-      </app-memory-map>
-    </div>
-
-    @if (activePin()) {
-      <div class="pin-memories">
-        <div class="label" style="padding:12px 22px 10px">
-          {{ activePin() }} · {{ pinMemories().length }} {{ pinMemories().length === 1 ? 'recuerdo' : 'recuerdos' }}
-        </div>
-        @for (m of pinMemories(); track m.id) {
-          <a [routerLink]="['/albums', m.albumId]" class="pin-memory-row">
-            <div class="pin-mem-img">
-              <img [src]="m.url" [alt]="m.title || m.caption || 'Recuerdo'" loading="lazy">
-            </div>
-            <div class="pin-mem-info">
-              <div class="pin-mem-title">{{ m.title || m.caption || 'Recuerdo' }}</div>
-              <div class="pin-mem-sub">{{ albumName(m.albumId) }}</div>
-            </div>
-          </a>
-        }
-      </div>
-    }
-  }
+  <!-- Lista de pelis -->
+  <app-peliculas></app-peliculas>
 
   <!-- Sesión -->
   <div class="logout-wrap">

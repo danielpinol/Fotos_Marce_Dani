@@ -14,7 +14,7 @@ const fs = require('fs/promises');
 const mongoose = require('mongoose');
 const { listarRespaldos } = require('./backup');
 
-const COLECCIONES = ['albums', 'photos', 'prompts'];
+const COLECCIONES = ['albums', 'photos', 'movies', 'prompts'];
 
 /**
  * Al pasar por JSON los ObjectId quedaron como texto y las fechas como ISO.

@@ -1,0 +1,251 @@
+/* Lista de pelis. Reusa la paleta global para que ande en claro y oscuro. */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 26px 22px 14px;
+}
+
+.label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+
+.sec-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.peli-add-btn {
+  flex: none;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--accent);
+  font-size: 15px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform .25s var(--ease), background .25s var(--ease);
+}
+.peli-add-btn:hover { background: var(--card-2); transform: scale(1.06); }
+.peli-add-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Formulario ─────────────────────────────────────────── */
+.peli-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 0 22px 16px;
+}
+
+.peli-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+}
+.peli-input::placeholder { color: var(--ink-faint); }
+.peli-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.peli-input-sm { font-size: 13px; padding: 10px 14px; }
+
+.peli-save {
+  margin-top: 2px;
+  padding: 12px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity .2s var(--ease);
+}
+.peli-save:disabled { opacity: .45; cursor: default; }
+.peli-save:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* ── Carpetas ───────────────────────────────────────────── */
+.peli-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 22px 14px;
+}
+
+.peli-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 10px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-soft);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+}
+.peli-tab:hover { background: var(--card-2); }
+.peli-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.peli-tab.activa {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.peli-badge {
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+  font-size: 11px;
+}
+.peli-tab.activa .peli-badge { background: rgba(255, 255, 255, .25); }
+
+/* ── Lista ──────────────────────────────────────────────── */
+.peli-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.peli-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-soft);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.peli-row.vista { background: var(--card-2); }
+
+.peli-check {
+  flex: none;
+  margin-top: 1px;
+  width: 26px; height: 26px;
+  border: none;
+  background: none;
+  color: var(--ink-faint);
+  font-size: 19px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color .2s var(--ease), transform .2s var(--ease);
+}
+.peli-check:hover { transform: scale(1.12); }
+.peli-check:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 50%; }
+.peli-row.vista .peli-check { color: var(--accent); }
+
+.peli-info { flex: 1; min-width: 0; }
+
+.peli-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--ink);
+  word-break: break-word;
+}
+.peli-row.vista .peli-title {
+  text-decoration: line-through;
+  text-decoration-color: var(--ink-faint);
+  color: var(--ink-soft);
+}
+
+.peli-notes {
+  margin-top: 3px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  word-break: break-word;
+}
+
+.peli-meta {
+  margin-top: 5px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: var(--ink-faint);
+}
+.peli-sep { margin: 0 5px; }
+
+.peli-stars {
+  margin-top: 7px;
+  display: flex;
+  gap: 3px;
+}
+
+.peli-star {
+  border: none;
+  background: none;
+  padding: 2px;
+  font-size: 12px;
+  color: var(--line);
+  cursor: pointer;
+  transition: color .18s var(--ease), transform .18s var(--ease);
+}
+.peli-star:hover { transform: scale(1.2); }
+.peli-star:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 3px; }
+.peli-star.llena { color: var(--gold); }
+
+.peli-del {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 4px;
+  color: var(--ink-faint);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color .2s var(--ease);
+}
+.peli-del:hover { color: var(--accent); }
+.peli-del:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* ── Vacío ──────────────────────────────────────────────── */
+.peli-empty {
+  margin: 0 22px;
+  padding: 30px 22px;
+  border-radius: var(--r-md);
+  border: 1px dashed var(--line);
+  text-align: center;
+  color: var(--ink-soft);
+}
+.peli-empty .eg { font-size: 30px; margin-bottom: 8px; }
+.peli-empty p {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+}
