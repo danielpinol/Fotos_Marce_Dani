@@ -51,7 +51,7 @@
     </div>
     <a [routerLink]="['/albums', feat.albumId]" class="exhibit" [attr.aria-label]="photoLabel(feat)">
       <div class="ex-frame">
-        <img [src]="toThumbnailUrl(feat)" [alt]="photoLabel(feat)" loading="eager">
+        <img [src]="toHqThumbnailUrl(feat)" [alt]="photoLabel(feat)" loading="eager">
       </div>
       <div class="ex-meta">
         <div>

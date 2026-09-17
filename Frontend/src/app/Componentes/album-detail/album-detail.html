@@ -99,7 +99,7 @@
           @if (photo.resourceType === 'video') {
             <video [src]="toPlaybackUrl(photo)" class="detail-img" controls playsinline></video>
           } @else {
-            <img [src]="photo.url" [alt]="photoLabel(photo)" class="detail-img">
+            <img [src]="toPlaybackUrl(photo)" [alt]="photoLabel(photo)" class="detail-img">
           }
         </div>
 
