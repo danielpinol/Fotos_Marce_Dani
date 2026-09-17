@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { PhotoService, Album, Photo, toThumbnailUrl } from '../../services/photo.service';
+import { PhotoService, Album, Photo, toThumbnailUrl, toPlaybackUrl } from '../../services/photo.service';
 import { MOODS } from '../homepage/homepage';
 
 const PEOPLE: Record<string, { name: string; color: string }> = {
@@ -19,6 +19,7 @@ const REACTIONS = ['🫶', '🥹', '😂', '☀️', '😍', '🥰'];
 })
 export class AlbumDetail {
   protected readonly toThumbnailUrl = toThumbnailUrl;
+  protected readonly toPlaybackUrl  = toPlaybackUrl;
   private readonly photoService = inject(PhotoService);
   private readonly route        = inject(ActivatedRoute);
 

@@ -68,6 +68,17 @@ export function toThumbnailUrl(photo: Pick<Photo, 'url' | 'resourceType'>): stri
   return photo.resourceType === 'video' ? photo.url.replace(/\.[a-zA-Z0-9]+$/, '.jpg') : photo.url;
 }
 
+// Para la reproducción real (no el thumbnail): sin este parámetro, Cloudinary
+// entrega el video con la calidad que decida la cuenta — si tiene activada
+// la optimización automática de ancho de banda (común en el plan gratis),
+// eso baja la resolución sin avisar. q_auto:best fuerza la mejor calidad
+// que el códec permita, calculada por Cloudinary — no es el archivo crudo,
+// pero es la más alta que sirve sin subir el peso de forma desproporcionada.
+export function toPlaybackUrl(photo: Pick<Photo, 'url' | 'resourceType'>): string {
+  if (photo.resourceType !== 'video') return photo.url;
+  return photo.url.replace('/upload/', '/upload/q_auto:best/');
+}
+
 @Injectable({ providedIn: 'root' })
 export class PhotoService {
   private readonly http = inject(HttpClient);
