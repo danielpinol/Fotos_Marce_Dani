@@ -21,6 +21,13 @@ export class Upload {
   readonly previewUrl      = signal<string | null>(null);
   readonly uploading       = signal(false);
   readonly done            = signal(false);
+  readonly fileError       = signal('');
+
+  // Un video pesa mucho más que una foto — sin límite, una subida grande
+  // se cuelga sin avisar por qué.
+  private readonly MAX_FILE_MB = 100;
+
+  readonly isVideo = computed(() => this.selectedFile()?.type.startsWith('video/') ?? false);
 
   // New metadata fields
   readonly photoTitle   = signal('');
@@ -62,6 +69,14 @@ export class Upload {
     const input = e.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
+    this.fileError.set('');
+
+    if (file.size > this.MAX_FILE_MB * 1024 * 1024) {
+      this.fileError.set(`El archivo pesa más de ${this.MAX_FILE_MB} MB`);
+      input.value = '';
+      return;
+    }
+
     const prev = this.previewUrl();
     if (prev) URL.revokeObjectURL(prev);
     this.selectedFile.set(file);

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PhotoService, Photo, Album, Prompt } from '../../services/photo.service';
+import { PhotoService, Photo, Album, Prompt, toThumbnailUrl } from '../../services/photo.service';
 
 const ANNIVERSARY = new Date('2026-02-10T00:00:00');
 const ONE_YEAR_MS  = 365 * 24 * 60 * 60 * 1000;
@@ -33,6 +33,7 @@ const FALLBACK_PROMPTS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Homepage implements OnDestroy {
+  protected readonly toThumbnailUrl = toThumbnailUrl;
   private readonly photoService = inject(PhotoService);
   private readonly now = signal(new Date());
   private readonly timer = setInterval(() => this.now.set(new Date()), 1_000);

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { PhotoService, Photo, Album } from '../../services/photo.service';
+import { PhotoService, Photo, Album, toThumbnailUrl } from '../../services/photo.service';
 import { MOODS } from '../homepage/homepage';
 
 interface PhotoGroup {
@@ -17,6 +17,7 @@ interface PhotoGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Timeline {
+  protected readonly toThumbnailUrl = toThumbnailUrl;
   private readonly photoService = inject(PhotoService);
 
   readonly photos = signal<Photo[]>([]);

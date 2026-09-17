@@ -24,9 +24,13 @@
     <div class="section">
       <label class="photo-pick" for="photo-input"
              [class.has-preview]="previewUrl() !== null"
-             aria-label="Seleccionar foto">
+             aria-label="Seleccionar foto o video">
         @if (previewUrl()) {
-          <img [src]="previewUrl()!" alt="Vista previa" class="preview-img">
+          @if (isVideo()) {
+            <video [src]="previewUrl()!" class="preview-img" muted playsinline></video>
+          } @else {
+            <img [src]="previewUrl()!" alt="Vista previa" class="preview-img">
+          }
           <div class="preview-overlay" aria-hidden="true">
             <span style="font-size:22px">↻</span>
             <span>Cambiar</span>
@@ -34,14 +38,17 @@
         } @else {
           <div class="pick-inner">
             <i class="bi bi-camera pick-icon" aria-hidden="true"></i>
-            <span class="pick-label">Toca para subir su foto</span>
-            <span class="pick-sub">una foto por salida</span>
+            <span class="pick-label">Toca para subir su foto o video</span>
+            <span class="pick-sub">un recuerdo por salida</span>
           </div>
         }
       </label>
-      <input id="photo-input" type="file" accept="image/*"
-             class="file-input" aria-label="Seleccionar foto"
+      <input id="photo-input" type="file" accept="image/*,video/*"
+             class="file-input" aria-label="Seleccionar foto o video"
              (change)="onFileChange($event)">
+      @if (fileError()) {
+        <div class="geo-err">{{ fileError() }}</div>
+      }
     </div>
 
     <!-- Título -->

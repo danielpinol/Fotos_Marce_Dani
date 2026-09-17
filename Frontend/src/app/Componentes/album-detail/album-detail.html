@@ -43,7 +43,7 @@
         <button class="thumb" role="listitem"
                 (click)="open(i)"
                 [attr.aria-label]="photoLabel(photo)">
-          <img [src]="photo.url" [alt]="photoLabel(photo)" loading="lazy">
+          <img [src]="toThumbnailUrl(photo)" [alt]="photoLabel(photo)" loading="lazy">
           @if (photo.title || photo.caption) {
             <div class="thumb-caption">{{ photo.title || photo.caption }}</div>
           }
@@ -96,7 +96,11 @@
       @if (activeTab() === 'foto') {
         <!-- Hero image -->
         <div class="detail-hero">
-          <img [src]="photo.url" [alt]="photoLabel(photo)" class="detail-img">
+          @if (photo.resourceType === 'video') {
+            <video [src]="photo.url" class="detail-img" controls playsinline></video>
+          } @else {
+            <img [src]="photo.url" [alt]="photoLabel(photo)" class="detail-img">
+          }
         </div>
 
         <!-- Title & caption -->

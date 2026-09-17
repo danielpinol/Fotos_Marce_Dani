@@ -33,7 +33,7 @@
               <div class="tl-card" role="button" tabindex="0"
                    [attr.aria-label]="photoLabel(photo)">
                 <div class="tc-frame">
-                  <img [src]="photo.url" [alt]="photoLabel(photo)" loading="lazy">
+                  <img [src]="toThumbnailUrl(photo)" [alt]="photoLabel(photo)" loading="lazy">
                 </div>
                 <div class="tc-ttl">{{ photoLabel(photo) }}</div>
                 <div class="tc-row">

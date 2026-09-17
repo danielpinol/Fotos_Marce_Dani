@@ -32,6 +32,7 @@ export interface Photo {
   id: string;
   albumId: string;
   url: string;
+  resourceType: 'image' | 'video';
   title: string;
   caption: string;
   date: string;
@@ -58,6 +59,14 @@ const API = typeof window !== 'undefined' && window.location.hostname !== 'local
 
 const CLOUDINARY_CLOUD  = 'dtofbkdzb';
 const CLOUDINARY_PRESET = 'nuestro_museo';
+
+// El thumbnail de un video en Cloudinary es la misma URL con la extensión
+// cambiada a .jpg — no hace falta subir ni procesar nada aparte. Se usa en
+// toda vista de miniatura (grids, portadas, recap) para no intentar
+// dibujar un video adentro de un <img>.
+export function toThumbnailUrl(photo: Pick<Photo, 'url' | 'resourceType'>): string {
+  return photo.resourceType === 'video' ? photo.url.replace(/\.[a-zA-Z0-9]+$/, '.jpg') : photo.url;
+}
 
 @Injectable({ providedIn: 'root' })
 export class PhotoService {
@@ -88,18 +97,25 @@ export class PhotoService {
     return this.http.delete(`${API}/api/photos/${id}`);
   }
 
-  uploadPhoto(albumId: string, file: File, metadata: Partial<Omit<Photo, 'id' | 'url' | 'albumId' | 'createdAt' | 'reactions' | 'comments'>> = {}) {
+  uploadPhoto(albumId: string, file: File, metadata: Partial<Omit<Photo, 'id' | 'url' | 'resourceType' | 'albumId' | 'createdAt' | 'reactions' | 'comments'>> = {}) {
     const cloudForm = new FormData();
     cloudForm.append('file', file);
     cloudForm.append('upload_preset', CLOUDINARY_PRESET);
     return this.http
-      .post<{ secure_url: string }>(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+      .post<{ secure_url: string; resource_type: string }>(
+        // /auto/upload deja que Cloudinary detecte solo si es imagen o
+        // video — mismo preset unsigned, mismo flujo de dos pasos.
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`,
         cloudForm,
       )
       .pipe(
-        switchMap(({ secure_url }) =>
-          this.http.post<Photo>(`${API}/api/photos`, { albumId, url: secure_url, ...metadata }),
+        switchMap(({ secure_url, resource_type }) =>
+          this.http.post<Photo>(`${API}/api/photos`, {
+            albumId,
+            url: secure_url,
+            resourceType: resource_type === 'video' ? 'video' : 'image',
+            ...metadata,
+          }),
         ),
       );
   }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PhotoService, Photo } from '../../services/photo.service';
+import { PhotoService, Photo, toThumbnailUrl } from '../../services/photo.service';
 import { AuthService } from '../../services/auth.service';
 import { MOODS } from '../homepage/homepage';
 import { Peliculas } from '../peliculas/peliculas';
@@ -25,6 +25,7 @@ interface StatSummary {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Nosotros implements OnDestroy {
+  protected readonly toThumbnailUrl = toThumbnailUrl;
   private readonly photoService = inject(PhotoService);
   readonly auth = inject(AuthService);
   private readonly now = signal(new Date());

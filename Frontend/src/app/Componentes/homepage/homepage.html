@@ -51,7 +51,7 @@
     </div>
     <a [routerLink]="['/albums', feat.albumId]" class="exhibit" [attr.aria-label]="photoLabel(feat)">
       <div class="ex-frame">
-        <img [src]="feat.url" [alt]="photoLabel(feat)" loading="eager">
+        <img [src]="toThumbnailUrl(feat)" [alt]="photoLabel(feat)" loading="eager">
       </div>
       <div class="ex-meta">
         <div>
@@ -83,7 +83,7 @@
       <a [routerLink]="['/albums', photo.albumId]" class="poster" role="listitem"
          [attr.aria-label]="photoLabel(photo)">
         <div class="p-frame">
-          <img [src]="photo.url" [alt]="photoLabel(photo)" loading="lazy">
+          <img [src]="toThumbnailUrl(photo)" [alt]="photoLabel(photo)" loading="lazy">
         </div>
         <div class="p-t">{{ photoLabel(photo) }}</div>
         <div class="p-d">{{ moodOf(photo.mood).emoji }} {{ moodOf(photo.mood).label }}</div>

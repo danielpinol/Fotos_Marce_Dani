@@ -53,7 +53,7 @@
       </div>
     </div>
     <div class="recap-cover">
-      <img [src]="stats().mostLoved!.url" alt="Pieza más querida" class="recap-img" loading="lazy">
+      <img [src]="toThumbnailUrl(stats().mostLoved!)" alt="Pieza más querida" class="recap-img" loading="lazy">
       <div class="recap-ov">
         <div class="label" style="color:rgba(255,255,255,0.75);margin-bottom:8px">{{ currentMonthName() }} · en repaso</div>
         <div class="recap-big">Sentimiento dominante: <em>{{ stats().topMood.label.toUpperCase() }}</em></div>

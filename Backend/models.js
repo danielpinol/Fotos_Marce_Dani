@@ -20,8 +20,11 @@ const albumSchema = new mongoose.Schema({
 });
 
 const photoSchema = new mongoose.Schema({
-  albumId:   mongoose.Schema.Types.ObjectId,
-  url:       String,
+  albumId:      mongoose.Schema.Types.ObjectId,
+  url:          String,
+  // Default 'image' para que los recuerdos que ya existen (todos son foto)
+  // no queden con el campo vacío al agregar video.
+  resourceType: { type: String, enum: ['image', 'video'], default: 'image' },
   title:     { type: String, default: '' },
   caption:   { type: String, default: '' },
   date:      { type: String, default: '' },

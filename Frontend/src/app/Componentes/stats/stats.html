@@ -43,7 +43,7 @@
       <p class="memory-label">Primer recuerdo</p>
       <div class="memory-card">
         <div class="memory-img">
-          <img [src]="firstPhoto()!.url" alt="Primer recuerdo">
+          <img [src]="toThumbnailUrl(firstPhoto()!)" alt="Primer recuerdo">
         </div>
         <p class="memory-date">{{ firstPhotoDate() }}</p>
       </div>

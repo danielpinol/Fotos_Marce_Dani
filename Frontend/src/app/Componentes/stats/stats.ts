@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, computed, inject, signal } from '@angular/core';
-import { PhotoService, Album, Photo } from '../../services/photo.service';
+import { PhotoService, Album, Photo, toThumbnailUrl } from '../../services/photo.service';
 
 const ANNIVERSARY = new Date('2026-02-10T00:00:00');
 
@@ -11,6 +11,7 @@ const ANNIVERSARY = new Date('2026-02-10T00:00:00');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Stats implements OnDestroy {
+  protected readonly toThumbnailUrl = toThumbnailUrl;
   private readonly photoService = inject(PhotoService);
   private readonly now = signal(new Date());
   private readonly timer = setInterval(() => this.now.set(new Date()), 1_000);

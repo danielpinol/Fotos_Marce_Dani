@@ -82,8 +82,9 @@ function fmtPhoto(doc) {
   const o = doc.toObject();
   return {
     id: o._id.toString(),
-    albumId:   o.albumId?.toString(),
-    url:       o.url,
+    albumId:      o.albumId?.toString(),
+    url:          o.url,
+    resourceType: o.resourceType ?? 'image',
     title:     o.title ?? '',
     caption:   o.caption ?? '',
     date:      o.date ?? '',
@@ -144,11 +145,18 @@ app.delete('/api/photos/:id', aw(async (req, res) => {
 }));
 
 
+// Cloudinary genera el thumbnail de un video solo con cambiar la
+// extension a .jpg — no hace falta subir ni procesar nada aparte.
+function toThumbnailUrl(url, resourceType) {
+  return resourceType === 'video' ? url.replace(/\.[a-zA-Z0-9]+$/, '.jpg') : url;
+}
+
 app.post('/api/photos', aw(async (req, res) => {
-  const { albumId, url, title, caption, date, place, mood, withWho, rating, tags, author } = req.body;
+  const { albumId, url, resourceType, title, caption, date, place, mood, withWho, rating, tags, author } = req.body;
   if (!url) return res.status(400).json({ error: 'url required' });
   const photo = await Photo.create({
     albumId, url,
+    resourceType: resourceType === 'video' ? 'video' : 'image',
     title:   title   ?? '',
     caption: caption ?? '',
     date:    date    ?? new Date().toLocaleDateString('sv', { timeZone: 'America/Guatemala' }),
@@ -162,7 +170,10 @@ app.post('/api/photos', aw(async (req, res) => {
   const album = await Album.findById(albumId);
   if (album) {
     album.photoCount++;
-    if (album.covers.length < 4) album.covers.push(url);
+    // Las portadas son siempre imagen: si el recuerdo es video, se guarda
+    // su thumbnail. Sin esto, una portada de video rompería el <img> de
+    // la lista de álbumes.
+    if (album.covers.length < 4) album.covers.push(toThumbnailUrl(url, photo.resourceType));
     await album.save();
   }
   res.json(fmtPhoto(photo));
